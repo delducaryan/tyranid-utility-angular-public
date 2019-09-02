@@ -13,6 +13,6 @@ export class FirestoreService {
   items: Observable<any[]>;
 
   constructor(private db: AngularFirestore) {
-    this.items = db.collection('books').valueChanges();
-   }
+    this.items = db.collection('biomorphs').valueChanges();
+  }
 }

@@ -18,4 +18,10 @@ export class TestViewDataComponent implements OnInit {
   ngOnInit() {
   }
 
+  getString = (item) => JSON.stringify(item, () => {
+    console.log(item);
+
+    return item.name;
+  })
+
 }
