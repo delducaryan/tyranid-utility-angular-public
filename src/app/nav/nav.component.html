@@ -1,28 +1,48 @@
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #drawer class="sidenav" fixedInViewport
-      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-      [mode]="(isHandset$ | async) ? 'over' : 'side'"
-      [opened]="(isHandset$ | async) === false">
+  <mat-sidenav
+    #drawer
+    fixedInViewport
+    class="sidenav"
+  >
     <mat-toolbar>Menu</mat-toolbar>
-    <mat-nav-list>
-      <a mat-list-item href="home">Home</a>
-      <a mat-list-item href="test">Test</a>
+    <mat-nav-list (click)="drawer.close()">
+      <a
+        mat-list-item
+        routerLink="/home"
+        routerLinkActive="active"
+      >
+        Home
+      </a>
+      <a
+        mat-list-item
+        routerLink="/test"
+        routerLinkActive="active"
+      >
+        Test
+      </a>
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content>
+  <mat-sidenav-content class="sidenav-content">
     <mat-toolbar color="primary">
       <button
-        type="button"
-        aria-label="Toggle sidenav"
         mat-icon-button
+        type="button"
         (click)="drawer.toggle()"
-        *ngIf="isHandset$ | async">
-        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      >
+        <mat-icon>
+          menu
+        </mat-icon>
       </button>
-      <span>tyranid-utility-angular</span>
+      <span>
+        tyranid-utility-angular
+      </span>
       <span class="toolbar-spacing"></span>
-      <span>Right Side</span>
+      <span>
+        Right Side
+      </span>
     </mat-toolbar>
-    <router-outlet></router-outlet>
+    <div class="router-container">
+      <router-outlet></router-outlet>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

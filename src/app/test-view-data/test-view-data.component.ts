@@ -12,16 +12,16 @@ export class TestViewDataComponent implements OnInit {
   items: any[];
 
   constructor(private firestoreService: FirestoreService) {
-    firestoreService.items.subscribe(val => this.items = val);
+    firestoreService.items$.subscribe(val => this.items = val);
   }
 
   ngOnInit() {
   }
 
-  getString = (item) => JSON.stringify(item, () => {
-    console.log(item);
+  getString = (item) => {
+    // console.log(item);
 
-    return item.name;
-  })
+    return JSON.stringify(item.name);
+  }
 
 }
