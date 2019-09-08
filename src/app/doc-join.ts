@@ -12,7 +12,66 @@ import {
   switchMap,
 } from 'rxjs/operators';
 
-export const populateWeaponOptions = (afs: AngularFirestore) => (
+export const populateBookReference = (afs: AngularFirestore) => (
+  source => (
+    defer(() => {
+      let parent: {
+        book: {
+          reference: DocumentReference | object,
+        },
+      };
+
+      return source.pipe(
+        switchMap((data: typeof parent) => {
+          parent = data;
+
+          const reference = parent.book.reference as DocumentReference;
+
+          return afs.doc(reference).valueChanges();
+        }),
+        map((obj: object) => {
+          parent.book.reference = obj;
+
+          return parent;
+        })
+      );
+    })
+  )
+);
+
+export const populateSharedAbilityReferences = (afs: AngularFirestore) => (
+  source => (
+    defer(() => {
+      let parent: {
+        'abilities-shared': (DocumentReference | object)[],
+      };
+
+      return source.pipe(
+        switchMap((data: typeof parent) => {
+          parent = data;
+
+          const references = parent['abilities-shared'] as DocumentReference[];
+          const docs$: Observable<unknown>[] = [];
+
+          references.forEach((reference) => {
+            docs$.push(afs.doc(reference).valueChanges().pipe(populateBookReference(afs)));
+          });
+
+          return combineLatest(docs$);
+        }),
+        map((arr: object[]) => {
+          arr.forEach((doc, i) => {
+            parent['abilities-shared'][i] = doc;
+          });
+
+          return parent;
+        })
+      );
+    })
+  )
+);
+
+export const populateWeaponReferences = (afs: AngularFirestore) => (
   source => (
     defer(() => {
       const addresses: number[][][] = [];
@@ -23,30 +82,22 @@ export const populateWeaponOptions = (afs: AngularFirestore) => (
           }[],
         }[],
       };
-      let weapons: typeof parent.weapons;
 
       return source.pipe(
         switchMap((data: typeof parent) => {
           parent = data;
-          weapons = parent.weapons;
 
           const docs$: Observable<unknown>[] = [];
           const seenDocs: string[] = [];
 
-          weapons.forEach((
-            weapon,
-            i,
-          ) => {
-            weapon.options.forEach((
-              option,
-              j,
-            ) => {
+          parent.weapons.forEach((weapon, i) => {
+            weapon.options.forEach((option, j) => {
               const reference = option.reference as DocumentReference;
               const index = seenDocs.findIndex(id => id === reference.id);
 
               if (index === -1) {
                 addresses.push([[i, j]]);
-                docs$.push(afs.doc(reference).valueChanges());
+                docs$.push(afs.doc(reference).valueChanges().pipe(populateBookReference(afs)));
                 seenDocs.push(reference.id);
               } else {
                 addresses[index].push([i, j]);
@@ -59,14 +110,11 @@ export const populateWeaponOptions = (afs: AngularFirestore) => (
         map((arr: object[]) => {
           arr.forEach((doc, i) => {
             addresses[i].forEach((address: number[]) => {
-              weapons[address[0]].options[address[1]].reference = doc;
+              parent.weapons[address[0]].options[address[1]].reference = doc;
             });
           });
 
-          return {
-            ...parent,
-            weapons,
-          };
+          return parent;
         })
       );
     })
