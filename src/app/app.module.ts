@@ -14,6 +14,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { NavComponent } from './nav/nav.component';
 import { TestViewDataComponent } from './test-view-data/test-view-data.component';
+import { EditUnitComponent } from './edit-unit/edit-unit.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { TestViewDataComponent } from './test-view-data/test-view-data.component
     HomeComponent,
     NavComponent,
     TestViewDataComponent,
+    EditUnitComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),

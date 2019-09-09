@@ -17,11 +17,4 @@ export class TestViewDataComponent implements OnInit {
 
   ngOnInit() {
   }
-
-  getString = (item) => {
-    // console.log(item);
-
-    return JSON.stringify(item.name);
-  }
-
 }

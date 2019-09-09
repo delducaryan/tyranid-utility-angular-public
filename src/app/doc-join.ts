@@ -39,38 +39,6 @@ export const populateBookReference = (afs: AngularFirestore) => (
   )
 );
 
-export const populateSharedAbilityReferences = (afs: AngularFirestore) => (
-  source => (
-    defer(() => {
-      let parent: {
-        'abilities-shared': (DocumentReference | object)[],
-      };
-
-      return source.pipe(
-        switchMap((data: typeof parent) => {
-          parent = data;
-
-          const references = parent['abilities-shared'] as DocumentReference[];
-          const docs$: Observable<unknown>[] = [];
-
-          references.forEach((reference) => {
-            docs$.push(afs.doc(reference).valueChanges().pipe(populateBookReference(afs)));
-          });
-
-          return combineLatest(docs$);
-        }),
-        map((arr: object[]) => {
-          arr.forEach((doc, i) => {
-            parent['abilities-shared'][i] = doc;
-          });
-
-          return parent;
-        })
-      );
-    })
-  )
-);
-
 export const populateArrayOptionReferences = (afs: AngularFirestore, category: string) => (
   source => (
     defer(() => {
@@ -118,5 +86,52 @@ export const populateArrayOptionReferences = (afs: AngularFirestore, category: s
         })
       );
     })
+  )
+);
+
+export const populateSharedAbilityReferences = (afs: AngularFirestore) => (
+  source => (
+    defer(() => {
+      let parent: {
+        'abilities-shared': (DocumentReference | object)[],
+      };
+
+      return source.pipe(
+        switchMap((data: typeof parent) => {
+          parent = data;
+
+          const references = parent['abilities-shared'] as DocumentReference[];
+          const docs$: Observable<unknown>[] = [];
+
+          references.forEach((reference) => {
+            docs$.push(afs.doc(reference).valueChanges().pipe(populateBookReference(afs)));
+          });
+
+          return combineLatest(docs$);
+        }),
+        map((arr: object[]) => {
+          arr.forEach((doc, i) => {
+            parent['abilities-shared'][i] = doc;
+          });
+
+          return parent;
+        })
+      );
+    })
+  )
+);
+
+export const populateAllUnitData = (afs: AngularFirestore) => (
+  source => (
+    defer(() => (
+      source.pipe(
+        populateBookReference(afs),
+        populateSharedAbilityReferences(afs),
+        populateArrayOptionReferences(afs, 'biomorphs'),
+        // populateArrayOptionReferences(afs, 'biomorphs-limited'),
+        populateArrayOptionReferences(afs, 'weapons'),
+        // populateArrayOptionReferences(afs, 'weapons-limited'),
+      )
+    ))
   )
 );

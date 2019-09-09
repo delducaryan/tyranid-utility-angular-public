@@ -4,11 +4,7 @@ import {
   BehaviorSubject,
   Observable,
 } from 'rxjs';
-import {
-  populateArrayOptionReferences,
-  populateBookReference,
-  populateSharedAbilityReferences
-} from './doc-join';
+import { populateAllUnitData } from './doc-join';
 
 @Injectable({
   providedIn: 'root'
@@ -20,18 +16,8 @@ export class FirestoreService {
   constructor(private afs: AngularFirestore) {
     this.items$ = afs.collection('weapons').valueChanges();
 
-    const arrayOptionCategory = 'biomorphs';
-
-    afs.doc('units/BPgy01fR5gc6oix96rBN').valueChanges().pipe(populateArrayOptionReferences(afs, arrayOptionCategory)).subscribe(val => {
-      console.log(val[arrayOptionCategory]);
-    });
-
-    afs.doc('units/BPgy01fR5gc6oix96rBN').valueChanges().pipe(populateBookReference(afs)).subscribe(val => {
-      // console.log(val);
-    });
-
-    afs.doc('units/BPgy01fR5gc6oix96rBN').valueChanges().pipe(populateSharedAbilityReferences(afs)).subscribe(val => {
-      // console.log(val);
+    afs.doc('units/BPgy01fR5gc6oix96rBN').valueChanges().pipe(populateAllUnitData(afs)).subscribe(val => {
+      console.log(val);
     });
   }
 }
