@@ -71,14 +71,12 @@ export const populateSharedAbilityReferences = (afs: AngularFirestore) => (
   )
 );
 
-export const populateWeaponReferences = (afs: AngularFirestore, weaponsLimited: boolean = false) => (
+export const populateArrayOptionReferences = (afs: AngularFirestore, category: string) => (
   source => (
     defer(() => {
-      const weaponsAddress: string = weaponsLimited ? 'weapons-limited' : 'weapons';
-
       const addresses: number[][][] = [];
       let parent: {
-        [weaponsAddress: string]: {
+        [category: string]: {
           options: {
             reference: DocumentReference | object,
           }[],
@@ -92,8 +90,8 @@ export const populateWeaponReferences = (afs: AngularFirestore, weaponsLimited: 
           const docs$: Observable<unknown>[] = [];
           const seenDocs: string[] = [];
 
-          parent[weaponsAddress].forEach((weapon, i) => {
-            weapon.options.forEach((option, j) => {
+          parent[category].forEach((item, i) => {
+            item.options.forEach((option, j) => {
               const reference = option.reference as DocumentReference;
               const index = seenDocs.findIndex(id => id === reference.id);
 
@@ -112,7 +110,7 @@ export const populateWeaponReferences = (afs: AngularFirestore, weaponsLimited: 
         map((arr: object[]) => {
           arr.forEach((doc, i) => {
             addresses[i].forEach((address: number[]) => {
-              parent[weaponsAddress][address[0]].options[address[1]].reference = doc;
+              parent[category][address[0]].options[address[1]].reference = doc;
             });
           });
 

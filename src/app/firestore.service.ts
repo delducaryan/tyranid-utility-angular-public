@@ -4,7 +4,11 @@ import {
   BehaviorSubject,
   Observable,
 } from 'rxjs';
-import { populateWeaponReferences, populateBookReference, populateSharedAbilityReferences } from './doc-join';
+import {
+  populateArrayOptionReferences,
+  populateBookReference,
+  populateSharedAbilityReferences
+} from './doc-join';
 
 @Injectable({
   providedIn: 'root'
@@ -14,10 +18,12 @@ export class FirestoreService {
   items$: Observable<any[]>;
 
   constructor(private afs: AngularFirestore) {
-    this.items$ = afs.collection('biomorphs').valueChanges();
+    this.items$ = afs.collection('weapons').valueChanges();
 
-    afs.doc('units/BPgy01fR5gc6oix96rBN').valueChanges().pipe(populateWeaponReferences(afs)).subscribe(val => {
-      // console.log(val);
+    const arrayOptionCategory = 'biomorphs';
+
+    afs.doc('units/BPgy01fR5gc6oix96rBN').valueChanges().pipe(populateArrayOptionReferences(afs, arrayOptionCategory)).subscribe(val => {
+      console.log(val[arrayOptionCategory]);
     });
 
     afs.doc('units/BPgy01fR5gc6oix96rBN').valueChanges().pipe(populateBookReference(afs)).subscribe(val => {
