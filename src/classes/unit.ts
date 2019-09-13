@@ -1,3 +1,4 @@
+import { DocumentReference } from '@angular/fire/firestore';
 import Ability from './ability';
 import Biomorph from './biomorph';
 import Book from './book';
@@ -8,23 +9,24 @@ export default class Unit {
     description: string,
     name: string,
   }[];
-  abilitiesShared: {
-    reference: Ability,
-  }[];
+  abilitiesShared: (Ability | DocumentReference)[];
   attacks: number;
   ballisticSkill: number;
   biomorphs: {
     enabled: boolean,
-    reference: Biomorph,
+    reference: Biomorph | DocumentReference,
   }[];
   biomorphsLimited: {
     options: {
       enabled: boolean,
       limitPerUnit: number,
-      reference: Biomorph,
+      reference: Biomorph | DocumentReference,
     }[],
   }[];
-  book: Book;
+  book: {
+    page: number,
+    reference: Book | DocumentReference,
+  };
   keywords: string[];
   leadership: number;
   modelsPerUnit: number;
@@ -39,14 +41,14 @@ export default class Unit {
   weapons: {
     options: {
       enabled: boolean,
-      reference: Weapon,
+      reference: Weapon | DocumentReference,
     }[]
   }[];
   weaponsLimited: {
     options: {
       enabled: boolean,
       limitPerUnit: number,
-      reference: Weapon,
+      reference: Weapon | DocumentReference,
     }[]
   }[];
   wounds: number;
@@ -85,32 +87,32 @@ export default class Unit {
       ability.name
     )).concat(
       this.abilitiesShared.map(ability => (
-        ability.reference.name
+        (ability as Ability).name
       ))
     ).sort()
   )
 
   getBiomorphNames = () => (
     this.biomorphs.map(option => (
-      option.reference.name
+      (option.reference as Biomorph).name
     )).sort()
   )
 
   getLimitedBiomorphNames = (idx: number) => (
     this.biomorphsLimited[idx].options.map(option => (
-      option.reference.name
+      (option.reference as Biomorph).name
     )).sort()
   )
 
   getWeaponNames = (idx: number) => (
     this.weapons[idx].options.map(option => (
-      option.reference.name
+      (option.reference as Weapon).name
     )).sort()
   )
 
   getLimitedWeaponNames = (idx: number) => (
     this.weaponsLimited[idx].options.map(option => (
-      option.reference.name
+      (option.reference as Weapon).name
     )).sort()
   )
 

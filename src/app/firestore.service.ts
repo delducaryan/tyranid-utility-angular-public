@@ -11,10 +11,10 @@ import { populateAllUnitData } from './doc-join';
 })
 export class FirestoreService {
 
-  items$: Observable<any[]>;
+  units$: Observable<any[]>;
 
   constructor(private afs: AngularFirestore) {
-    this.items$ = afs.collection('weapons').valueChanges();
+    this.units$ = afs.collection('units').valueChanges();
 
     afs.doc('units/BPgy01fR5gc6oix96rBN').valueChanges().pipe(populateAllUnitData(afs)).subscribe(val => {
       console.log(val);

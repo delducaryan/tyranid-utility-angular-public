@@ -1,7 +1,11 @@
+import { DocumentReference } from '@angular/fire/firestore';
 import Book from './book';
 
 export default class Ability {
-  book: Book;
+  book: {
+    page: number,
+    reference: Book | DocumentReference,
+  };
   description: string;
   name: string;
 

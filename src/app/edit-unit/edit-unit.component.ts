@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit
+} from '@angular/core';
 import Unit from '../../classes/unit';
 
 @Component({
@@ -10,11 +13,13 @@ export class EditUnitComponent implements OnInit {
 
   unit = new Unit();
 
-  constructor() {
-    
-  }
+  constructor() { }
 
   ngOnInit() {
+  }
+
+  loadUnit = (init: Unit) => {
+    this.unit = init;
   }
 
 }

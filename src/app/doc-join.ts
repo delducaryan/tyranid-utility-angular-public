@@ -3,6 +3,7 @@ import {
   DocumentReference
 } from '@angular/fire/firestore';
 import {
+  BehaviorSubject,
   combineLatest,
   defer,
   Observable,
@@ -11,15 +12,16 @@ import {
   map,
   switchMap,
 } from 'rxjs/operators';
+import Ability from '../classes/ability';
+import Biomorph from '../classes/biomorph';
+import Book from '../classes/book';
+import Unit from '../classes/unit';
+import Weapon from '../classes/weapon';
 
 export const populateBookReference = (afs: AngularFirestore) => (
   source => (
     defer(() => {
-      let parent: {
-        book: {
-          reference: DocumentReference | object,
-        },
-      };
+      let parent: Ability | Biomorph | Unit | Weapon;
 
       return source.pipe(
         switchMap((data: typeof parent) => {
@@ -29,11 +31,11 @@ export const populateBookReference = (afs: AngularFirestore) => (
 
           return afs.doc(reference).valueChanges();
         }),
-        map((obj: object) => {
-          parent.book.reference = obj;
+        map((book: Book) => {
+          parent.book.reference = book;
 
           return parent;
-        })
+        }),
       );
     })
   )
@@ -43,17 +45,11 @@ export const populateArrayOptionReferences = (afs: AngularFirestore, category: s
   source => (
     defer(() => {
       const addresses: number[][][] = [];
-      let parent: {
-        [category: string]: {
-          options: {
-            reference: DocumentReference | object,
-          }[],
-        }[],
-      };
+      let parent: Unit;
 
       return source.pipe(
-        switchMap((data: typeof parent) => {
-          parent = data;
+        switchMap((data: Unit) => {
+          parent = new Unit(data);
 
           const docs$: Observable<unknown>[] = [];
           const seenDocs: string[] = [];
@@ -73,9 +69,13 @@ export const populateArrayOptionReferences = (afs: AngularFirestore, category: s
             });
           });
 
+          if (docs$.length === 0) {
+            return new BehaviorSubject([]);
+          }
+
           return combineLatest(docs$);
         }),
-        map((arr: object[]) => {
+        map((arr: (Biomorph | Weapon)[]) => {
           arr.forEach((doc, i) => {
             addresses[i].forEach((address: number[]) => {
               parent[category][address[0]].options[address[1]].reference = doc;
@@ -83,7 +83,42 @@ export const populateArrayOptionReferences = (afs: AngularFirestore, category: s
           });
 
           return parent;
-        })
+        }),
+      );
+    })
+  )
+);
+
+export const populateBiomorphReferences = (afs: AngularFirestore) => (
+  source => (
+    defer(() => {
+      let parent: Unit;
+
+      return source.pipe(
+        switchMap((data: Unit) => {
+          parent = new Unit(data);
+
+          const docs$: Observable<unknown>[] = [];
+
+          parent.biomorphs.forEach((item) => {
+            const reference = item.reference as DocumentReference;
+
+            docs$.push(afs.doc(reference).valueChanges().pipe(populateBookReference(afs)));
+          });
+
+          if (docs$.length === 0) {
+            return new BehaviorSubject([]);
+          }
+
+          return combineLatest(docs$);
+        }),
+        map((arr: Biomorph[]) => {
+          arr.forEach((biomorph, i) => {
+            parent.biomorphs[i].reference = biomorph;
+          });
+
+          return parent;
+        }),
       );
     })
   )
@@ -92,30 +127,32 @@ export const populateArrayOptionReferences = (afs: AngularFirestore, category: s
 export const populateSharedAbilityReferences = (afs: AngularFirestore) => (
   source => (
     defer(() => {
-      let parent: {
-        'abilities-shared': (DocumentReference | object)[],
-      };
+      let parent: Unit;
 
       return source.pipe(
-        switchMap((data: typeof parent) => {
-          parent = data;
+        switchMap((data: Unit) => {
+          parent = new Unit(data);
 
-          const references = parent['abilities-shared'] as DocumentReference[];
+          const references = parent.abilitiesShared as DocumentReference[];
           const docs$: Observable<unknown>[] = [];
 
           references.forEach((reference) => {
             docs$.push(afs.doc(reference).valueChanges().pipe(populateBookReference(afs)));
           });
 
+          if (docs$.length === 0) {
+            return new BehaviorSubject([]);
+          }
+
           return combineLatest(docs$);
         }),
-        map((arr: object[]) => {
-          arr.forEach((doc, i) => {
-            parent['abilities-shared'][i] = doc;
+        map((arr: Ability[]) => {
+          arr.forEach((item, i) => {
+            parent.abilitiesShared[i] = item;
           });
 
           return parent;
-        })
+        }),
       );
     })
   )
@@ -126,11 +163,11 @@ export const populateAllUnitData = (afs: AngularFirestore) => (
     defer(() => (
       source.pipe(
         populateBookReference(afs),
+        populateBiomorphReferences(afs),
         populateSharedAbilityReferences(afs),
-        populateArrayOptionReferences(afs, 'biomorphs'),
-        // populateArrayOptionReferences(afs, 'biomorphs-limited'),
+        populateArrayOptionReferences(afs, 'biomorphsLimited'),
         populateArrayOptionReferences(afs, 'weapons'),
-        // populateArrayOptionReferences(afs, 'weapons-limited'),
+        populateArrayOptionReferences(afs, 'weaponsLimited'),
       )
     ))
   )

@@ -9,10 +9,10 @@ import { Observable } from 'rxjs';
 })
 export class TestViewDataComponent implements OnInit {
 
-  items: any[];
+  units: any[];
 
   constructor(private firestoreService: FirestoreService) {
-    firestoreService.items$.subscribe(val => this.items = val);
+    firestoreService.units$.subscribe(val => this.units = val);
   }
 
   ngOnInit() {

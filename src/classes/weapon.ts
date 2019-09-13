@@ -1,9 +1,13 @@
+import { DocumentReference } from '@angular/fire/firestore';
 import Book from './book';
 
 export default class Weapon {
   ammunition: number;
   armourPenetration: number;
-  book: Book;
+  book: {
+    page: number,
+    reference: Book | DocumentReference,
+  };
   damage: number;
   name: string;
   points: number;
