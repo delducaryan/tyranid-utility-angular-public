@@ -1,0 +1,28 @@
+<mat-card>
+  <mat-card-title>
+    {{title}}
+  </mat-card-title>
+  <mat-card-content>
+    <div *ngFor="let item of data; index as i" class="flex-container">
+      <app-option-selection class="full-width-option-selection" [setOptionsList]=optionsList></app-option-selection>
+      <div class="delete-button-div">
+        <button
+          mat-stroked-button
+          color="warn"
+          (click)="removeSelection(i)"
+        >
+          <mat-icon>
+            delete_outline
+          </mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-stroked-button (click)="addSelection()">
+      <mat-icon>
+        add_circle_outline
+      </mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>

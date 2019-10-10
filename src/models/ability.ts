@@ -1,24 +1,22 @@
 import { DocumentReference } from '@angular/fire/firestore';
 import Book from './book';
 
-export default class Biomorph {
+export default class Ability {
   book: {
     page: number,
     reference: Book | DocumentReference,
   };
   description: string;
+  id: string;
   name: string;
-  points: number;
-  variant: string;
 
-  constructor(biomorph?: Partial<Biomorph>) {
+  constructor(ability?: Partial<Ability>) {
     const init = {
       book: new Book(),
       description: '',
-      name: 'New Biomorph',
-      points: 1,
-      variant: '',
-      ...biomorph,
+      id: '',
+      name: 'New Ability',
+      ...ability,
     };
 
     Object.assign(this, init);

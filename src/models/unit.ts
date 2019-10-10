@@ -5,18 +5,18 @@ import Book from './book';
 import Weapon from './weapon';
 
 export default class Unit {
-  abilities: {
+  abilities?: {
     description: string,
     name: string,
   }[];
-  abilitiesShared: (Ability | DocumentReference)[];
+  abilitiesShared?: (Ability | DocumentReference)[];
   attacks: number;
   ballisticSkill: number;
-  biomorphs: {
+  biomorphs?: {
     enabled: boolean,
     reference: Biomorph | DocumentReference,
   }[];
-  biomorphsLimited: {
+  biomorphsLimited?: {
     options: {
       enabled: boolean,
       limitPerUnit: number,
@@ -27,6 +27,7 @@ export default class Unit {
     page: number,
     reference: Book | DocumentReference,
   };
+  id: string;
   keywords: string[];
   leadership: number;
   modelsPerUnit: number;
@@ -38,22 +39,23 @@ export default class Unit {
   toughness: number;
   unitCapacity: number;
   weaponSkill: number;
-  weapons: {
+  weapons?: {
     options: {
       enabled: boolean,
       reference: Weapon | DocumentReference,
     }[]
   }[];
-  weaponsLimited: {
+  weaponsLimited?: {
     options: {
       enabled: boolean,
       limitPerUnit: number,
+      optionReplaced: number,
       reference: Weapon | DocumentReference,
     }[]
   }[];
   wounds: number;
 
-  constructor(unit?: Partial<Unit>) {
+  constructor(unit?: Unit) {
     const init = {
       abilities: [],
       abilitiesShared: [],
@@ -62,6 +64,7 @@ export default class Unit {
       biomorphs: [],
       biomorphsLimited: [],
       book: new Book(),
+      id: '',
       keywords: [],
       leadership: 5,
       modelsPerUnit: 1,

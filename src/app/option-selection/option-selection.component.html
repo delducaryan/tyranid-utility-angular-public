@@ -1,0 +1,42 @@
+<mat-form-field appearance="outline" class="full-width-form-field">
+  <mat-label>
+    Selection
+  </mat-label>
+  <mat-chip-list #chipList>
+    <mat-chip
+      *ngFor="let option of selectedOptions; index as i"
+      [color]="option['enabled'] ? 'primary' : ''"
+      [selected]="option['enabled'] ? true : false"
+      [removable]="true"
+      (click)="clickChip(i)"
+      (removed)="removeChip(i)"
+      (selectionChange)="selectionChangeChip($event, option['enabled'])"
+    >
+      {{getVariantNameWrapper(option.reference)}}
+      <mat-icon matChipRemove>
+        cancel
+      </mat-icon>
+    </mat-chip>
+    <input
+      #chipListInput
+      placeholder="New Option"
+      [formControl]="chipFormControl"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      (blur)="clearInput()"
+    >
+  </mat-chip-list>
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    autoActiveFirstOption
+    (optionSelected)="optionSelected($event)"
+  >
+    <mat-option *ngFor="let option of filteredOptions | async" [value]="option['index']">
+      {{option.value}}
+    </mat-option>
+  </mat-autocomplete>
+  <mat-hint>
+    Enabled: {{getEnabledName()}}
+  </mat-hint>
+</mat-form-field>
