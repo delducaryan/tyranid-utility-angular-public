@@ -15,7 +15,10 @@ import {
   MatChipSelectionChange,
 } from '@angular/material/chips';
 import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+} from 'rxjs';
 import {
   map,
   startWith,
@@ -30,18 +33,10 @@ import Weapon from 'src/models/weapon';
 @Component({
   selector: 'app-option-selection',
   templateUrl: './option-selection.component.html',
-  styleUrls: ['./option-selection.component.css']
+  styleUrls: ['./option-selection.component.scss']
 })
 export class OptionSelectionComponent implements OnInit {
 
-  @Input() set init(value: {
-    enabled: boolean,
-    reference: Biomorph | Weapon,
-  }[]) {
-    Object.assign(this.selectedOptions, value);
-
-    this.selectedOptions.sort(compareReferencesByVariantName);
-  }
   @Input() set setOptionsList(optionsList: (Biomorph | Weapon)[]) {
     this.optionsList = optionsList;
 
@@ -56,8 +51,13 @@ export class OptionSelectionComponent implements OnInit {
       }),
     );
   }
+  @Input() selectedOptions: BehaviorSubject<{
+    enabled: boolean,
+    reference: Biomorph | Weapon,
+  }[]>;
+  @Input() unitLimit: boolean;
 
-  @ViewChild('chipList', { static: false }) chipList: MatChipList;
+  @ViewChild(MatChipList, { static: false }) chipList: MatChipList;
   @ViewChild('chipListInput', { static: false }) chipListInput: ElementRef<HTMLInputElement>;
 
   readonly separatorKeysCodes: number[] = [
@@ -71,31 +71,29 @@ export class OptionSelectionComponent implements OnInit {
     value: string,
   }[]>;
   optionsList: (Biomorph | Weapon)[];
-  selectedOptions: {
-    enabled: boolean,
-    reference: Biomorph | Weapon,
-  }[];
 
   constructor() {
     this.chipFormControl = new FormControl();
     this.optionsList = [];
-    this.selectedOptions = [];
+    this.selectedOptions = new BehaviorSubject([]);
+    this.unitLimit = false;
   }
 
   ngOnInit() { }
 
   clearInput = () => {
+    this.chipFormControl.setValue(null);
     this.chipListInput.nativeElement.value = '';
   }
 
   clickChip = (index: number) => {
-    if (this.selectedOptions[index].enabled) {
-      this.selectedOptions[index].enabled = false;
+    if (this.selectedOptions.value[index].enabled) {
+      this.selectedOptions.value[index].enabled = false;
     } else {
-      this.selectedOptions.filter(value => value.enabled).forEach(value => {
+      this.selectedOptions.value.filter(value => value.enabled).forEach(value => {
         value.enabled = false;
       });
-      this.selectedOptions[index].enabled = true;
+      this.selectedOptions.value[index].enabled = true;
     }
   }
 
@@ -112,13 +110,13 @@ export class OptionSelectionComponent implements OnInit {
 
       return (
         option.value.toLowerCase().indexOf(filterValue) > -1 &&
-        !this.selectedOptions.map(opt => getVariantName(opt.reference)).includes(option.value)
+        !this.selectedOptions.value.map(o => getVariantName(o.reference)).includes(option.value)
       );
     });
   }
 
   getEnabledName = () => {
-    const enabledOption = this.selectedOptions.find((value) => value.enabled);
+    const enabledOption = this.selectedOptions.value.find((value) => value.enabled);
 
     if (enabledOption) {
       return getVariantName(enabledOption.reference);
@@ -130,17 +128,23 @@ export class OptionSelectionComponent implements OnInit {
   getVariantNameWrapper = (value: VariantName) => getVariantName(value);
 
   optionSelected = (event: MatAutocompleteSelectedEvent) => {
-    this.selectedOptions.push({
+    const selectedOptionsValue = this.selectedOptions.value;
+
+    selectedOptionsValue.push({
       enabled: false,
       reference: this.optionsList[event.option.value],
     });
-    this.selectedOptions.sort(compareReferencesByVariantName);
+    selectedOptionsValue.sort(compareReferencesByVariantName);
+    this.selectedOptions.next(selectedOptionsValue);
     this.chipFormControl.setValue(null);
     this.chipListInput.nativeElement.value = '';
   }
 
   removeChip = (index: number) => {
-    this.selectedOptions.splice(index, 1);
+    const selectedOptionsValue = this.selectedOptions.value;
+
+    selectedOptionsValue.splice(index, 1);
+    this.selectedOptions.next(selectedOptionsValue);
     this.chipFormControl.setValue(null);
   }
 

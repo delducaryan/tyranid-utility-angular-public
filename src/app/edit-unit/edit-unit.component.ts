@@ -8,20 +8,21 @@ import {
   OnInit,
 } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { BehaviorSubject } from 'rxjs';
 
 import { FirestoreService } from '../firestore.service';
 
-import Ability from '../../models/ability';
-import Biomorph from '../../models/biomorph';
-import Book from '../../models/book';
-import Unit from '../../models/unit';
-import Weapon from '../../models/weapon';
-import { compareByName } from '../../utilities/sort';
+import { compareByName } from 'src/utilities/sort';
+import Ability from 'src/models/ability';
+import Biomorph from 'src/models/biomorph';
+import Book from 'src/models/book';
+import Unit from 'src/models/unit';
+import Weapon from 'src/models/weapon';
 
 @Component({
   selector: 'app-edit-unit',
   templateUrl: './edit-unit.component.html',
-  styleUrls: ['./edit-unit.component.css']
+  styleUrls: ['./edit-unit.component.scss']
 })
 export class EditUnitComponent implements OnInit {
 
@@ -34,11 +35,36 @@ export class EditUnitComponent implements OnInit {
 
   unit: Unit;
   abilitiesShared: Ability[];
-  biomorphs: Biomorph[];
+  biomorphsLimited: BehaviorSubject<
+    BehaviorSubject<
+      {
+        enabled: boolean,
+        limitPerUnit: number,
+        reference: Biomorph | Weapon,
+      }[]
+    >[]
+  >;
+  biomorphsList: Biomorph[];
   books: Book[];
-  weapons: Weapon[];
+  weapons: BehaviorSubject<
+    BehaviorSubject<
+      {
+        enabled: boolean,
+        reference: Biomorph | Weapon,
+      }[]
+    >[]
+  >;
+  weaponsList: Weapon[];
 
-  constructor(private fs: FirestoreService) { }
+
+  constructor(private fs: FirestoreService) {
+    this.abilitiesShared = [];
+    this.biomorphsLimited = new BehaviorSubject([]);
+    this.biomorphsList = [];
+    this.books = [];
+    this.weapons = new BehaviorSubject([]);
+    this.weaponsList = [];
+  }
 
   ngOnInit() {
     if (this.init) {
@@ -47,17 +73,12 @@ export class EditUnitComponent implements OnInit {
       this.unit = new Unit();
     }
 
-    this.abilitiesShared = [];
-    this.biomorphs = [];
-    this.books = [];
-    this.weapons = [];
-
     this.fs.abilities$.subscribe((value: Ability[]) => {
       this.abilitiesShared = value.sort(compareByName);
     });
 
     this.fs.biomorphs$.subscribe((value: Biomorph[]) => {
-      this.biomorphs = value.sort(compareByName);
+      this.biomorphsList = value.sort(compareByName);
     });
 
     this.fs.books$.subscribe((value: Book[]) => {
@@ -65,7 +86,7 @@ export class EditUnitComponent implements OnInit {
     });
 
     this.fs.weapons$.subscribe((value: Weapon[]) => {
-      this.weapons = value.sort(compareByName);
+      this.weaponsList = value.sort(compareByName);
     });
 
     this.fs.termagants$.subscribe((value: Unit) => {
@@ -90,6 +111,20 @@ export class EditUnitComponent implements OnInit {
     const index = this.unit.keywords.indexOf(keyword);
 
     this.unit.keywords.splice(index, 1);
+  }
+
+  clickSave = () => {
+    this.unit.biomorphsLimited = [];
+
+    this.biomorphsLimited.value.forEach(item => {
+      this.unit.biomorphsLimited.push({
+        options: item.value as {
+          enabled: boolean,
+          limitPerUnit: number,
+          reference: Biomorph,
+        }[]
+      });
+    });
   }
 
 }

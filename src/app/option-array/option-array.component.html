@@ -3,8 +3,18 @@
     {{title}}
   </mat-card-title>
   <mat-card-content>
-    <div *ngFor="let item of data; index as i" class="flex-container">
-      <app-option-selection class="full-width-option-selection" [setOptionsList]=optionsList></app-option-selection>
+    <div
+      *ngFor="let item of data | async; index as i"
+      class="flex-container"
+      [@expand]="open ? 'open' : 'closed'"
+    >
+      <app-option-selection
+        class="full-width-option-selection"
+        [selectedOptions]=item
+        [setOptionsList]=optionsList
+        [unitLimit]=unitLimit
+      >
+      </app-option-selection>
       <div class="delete-button-div">
         <button
           mat-stroked-button
@@ -22,6 +32,11 @@
     <button mat-stroked-button (click)="addSelection()">
       <mat-icon>
         add_circle_outline
+      </mat-icon>
+    </button>
+    <button mat-stroked-button (click)="toggleOpen()">
+      <mat-icon>
+        all_out
       </mat-icon>
     </button>
   </mat-card-actions>

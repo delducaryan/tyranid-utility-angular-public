@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-test-view-data',
   templateUrl: './test-view-data.component.html',
-  styleUrls: ['./test-view-data.component.css']
+  styleUrls: ['./test-view-data.component.scss']
 })
 export class TestViewDataComponent implements OnInit {
 
