@@ -36,7 +36,10 @@
       {{option.value}}
     </mat-option>
   </mat-autocomplete>
-  <mat-hint>
+  <mat-hint *ngIf="!unitLimit">
     Enabled: {{getEnabledName()}}
+  </mat-hint>
+  <mat-hint *ngIf="unitLimit">
+    UnitLimit Enabled
   </mat-hint>
 </mat-form-field>

@@ -39,11 +39,11 @@
   </mat-card-header>
   <img mat-card-image src="../../assets/images/julio-nicoletti-julionicoletti-2016-tyranid-009.jpg">
   <mat-card-content>
-    <app-option-array [data]=biomorphsLimited [optionsList]=biomorphsList [title]="'Biomorphs'" [unitLimit]="true"></app-option-array>
-    <br />
-    <mat-divider></mat-divider>
-    <br />
-    <app-option-array [data]=weapons [optionsList]=weaponsList [title]="'Weapons'"></app-option-array>
+    <mat-accordion class="accordion-headers-align">
+      <app-option-array [data]=biomorphsLimited [optionsList]=biomorphsList [title]="'Limited Biomorphs'" [unitLimit]="true"></app-option-array>
+      <app-option-array [data]=weapons [optionsList]=weaponsList [title]="'Weapons'"></app-option-array>
+      <app-option-array [data]=weaponsLimited [optionsList]=weaponsList [title]="'Limited Weapons'" [optionReplaced]="true" [unitLimit]="true"></app-option-array>
+    </mat-accordion>
   </mat-card-content>
   <mat-card-actions>
     <button mat-stroked-button (click)="clickSave()">Save</button>

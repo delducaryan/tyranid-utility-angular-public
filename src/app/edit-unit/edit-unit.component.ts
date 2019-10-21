@@ -40,7 +40,7 @@ export class EditUnitComponent implements OnInit {
       {
         enabled: boolean,
         limitPerUnit: number,
-        reference: Biomorph | Weapon,
+        reference: Biomorph,
       }[]
     >[]
   >;
@@ -50,19 +50,30 @@ export class EditUnitComponent implements OnInit {
     BehaviorSubject<
       {
         enabled: boolean,
-        reference: Biomorph | Weapon,
+        reference: Weapon,
       }[]
     >[]
+  >;
+  weaponsLimited: BehaviorSubject<
+      BehaviorSubject<
+        {
+          enabled: boolean,
+          limitPerUnit: number,
+          optionReplaced: number,
+          reference: Weapon,
+        }[]
+      >[]
   >;
   weaponsList: Weapon[];
 
 
   constructor(private fs: FirestoreService) {
     this.abilitiesShared = [];
-    this.biomorphsLimited = new BehaviorSubject([]);
+    this.biomorphsLimited = new BehaviorSubject([new BehaviorSubject([])]);
     this.biomorphsList = [];
     this.books = [];
-    this.weapons = new BehaviorSubject([]);
+    this.weapons = new BehaviorSubject([new BehaviorSubject([])]);
+    this.weaponsLimited = new BehaviorSubject([new BehaviorSubject([])]);
     this.weaponsList = [];
   }
 

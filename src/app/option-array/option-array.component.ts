@@ -9,6 +9,7 @@ import {
   Component,
   Input,
   OnInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
@@ -18,20 +19,16 @@ import Weapon from 'src/models/weapon';
 @Component({
   selector: 'app-option-array',
   animations: [
-    trigger('expand', [
+    trigger('collapse', [
       state('closed', style({
         height: '0',
-        overflow: 'hidden',
       })),
-      state('open', style({
-        height: '*',
-        overflow: 'hidden',
-      })),
+      state('open', style({ })),
       transition('closed => open', [
-        animate('100ms'),
+        animate('100ms ease-in-out'),
       ]),
       transition('open => closed', [
-        animate('1000ms'),
+        animate('100ms ease-in-out'),
       ]),
     ]),
   ],
@@ -48,18 +45,20 @@ export class OptionArrayComponent implements OnInit {
       }[]
     >[]
   >;
+  @Input() optionReplaced: boolean;
   @Input() optionsList: (Biomorph | Weapon)[];
   @Input() title: string;
   @Input() unitLimit: boolean;
 
-  open: boolean;
+  selectionOpen: boolean[];
 
-  constructor() {
+  constructor(private cdr: ChangeDetectorRef) {
     this.data = new BehaviorSubject([]);
+    this.optionReplaced = false;
     this.optionsList = [];
+    this.selectionOpen = [];
     this.title = '';
     this.unitLimit = false;
-    this.open = false;
   }
 
   ngOnInit() { }
@@ -69,10 +68,12 @@ export class OptionArrayComponent implements OnInit {
 
     dataValue.push(new BehaviorSubject([]));
     this.data.next(dataValue);
+    this.selectionOpen.push(false);
   }
 
-  toggleOpen = () => {
-    this.open = !this.open;
+  animateSelection = (index: number, open: boolean) => {
+    this.selectionOpen[index] = open;
+    this.cdr.detectChanges();
   }
 
   removeSelection = (index: number) => {
@@ -80,6 +81,12 @@ export class OptionArrayComponent implements OnInit {
 
     dataValue.splice(index, 1);
     this.data.next(dataValue);
+    this.selectionOpen.splice(index, 1);
   }
+
+  getAfterViewInitObject = (index: number) => ({
+    index,
+    method: this.animateSelection,
+  })
 
 }

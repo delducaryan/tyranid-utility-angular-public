@@ -3,10 +3,10 @@ import {
   ENTER,
 } from '@angular/cdk/keycodes';
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   Input,
-  OnInit,
   ViewChild,
 } from '@angular/core';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -35,8 +35,19 @@ import Weapon from 'src/models/weapon';
   templateUrl: './option-selection.component.html',
   styleUrls: ['./option-selection.component.scss']
 })
-export class OptionSelectionComponent implements OnInit {
+export class OptionSelectionComponent implements AfterViewInit {
 
+  @Input() afterViewInit: {
+    index: number,
+    method: (
+      index: number,
+      open: boolean
+    ) => void,
+  };
+  @Input() selectedOptions: BehaviorSubject<{
+    enabled: boolean,
+    reference: Biomorph | Weapon,
+  }[]>;
   @Input() set setOptionsList(optionsList: (Biomorph | Weapon)[]) {
     this.optionsList = optionsList;
 
@@ -51,10 +62,6 @@ export class OptionSelectionComponent implements OnInit {
       }),
     );
   }
-  @Input() selectedOptions: BehaviorSubject<{
-    enabled: boolean,
-    reference: Biomorph | Weapon,
-  }[]>;
   @Input() unitLimit: boolean;
 
   @ViewChild(MatChipList, { static: false }) chipList: MatChipList;
@@ -74,12 +81,18 @@ export class OptionSelectionComponent implements OnInit {
 
   constructor() {
     this.chipFormControl = new FormControl();
+    this.afterViewInit = {
+      index: 0,
+      method: () => { },
+    };
     this.optionsList = [];
     this.selectedOptions = new BehaviorSubject([]);
     this.unitLimit = false;
   }
 
-  ngOnInit() { }
+  ngAfterViewInit() {
+    this.afterViewInit.method(this.afterViewInit.index, true);
+  }
 
   clearInput = () => {
     this.chipFormControl.setValue(null);

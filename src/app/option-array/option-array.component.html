@@ -1,43 +1,43 @@
-<mat-card>
-  <mat-card-title>
-    {{title}}
-  </mat-card-title>
-  <mat-card-content>
-    <div
-      *ngFor="let item of data | async; index as i"
-      class="flex-container"
-      [@expand]="open ? 'open' : 'closed'"
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      {{title}}
+    </mat-panel-title>
+    <mat-panel-description>
+      Temporary description
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <div
+    *ngFor="let item of data | async; index as i"
+    class="flex-container"
+    [@collapse]="selectionOpen[i] ? 'open' : 'closed'"
+    (@collapse.done)="!selectionOpen[i] ? removeSelection(i) : ''"
+  >
+    <app-option-selection
+      class="full-width-option-selection"
+      [afterViewInit]="getAfterViewInitObject(i)"
+      [selectedOptions]=item
+      [setOptionsList]=optionsList
+      [unitLimit]=unitLimit
     >
-      <app-option-selection
-        class="full-width-option-selection"
-        [selectedOptions]=item
-        [setOptionsList]=optionsList
-        [unitLimit]=unitLimit
+    </app-option-selection>
+    <div class="delete-button-wrapper">
+      <button
+        mat-stroked-button
+        color="warn"
+        (click)="animateSelection(i, false)"
       >
-      </app-option-selection>
-      <div class="delete-button-div">
-        <button
-          mat-stroked-button
-          color="warn"
-          (click)="removeSelection(i)"
-        >
-          <mat-icon>
-            delete_outline
-          </mat-icon>
-        </button>
-      </div>
+        <mat-icon>
+          delete_outline
+        </mat-icon>
+      </button>
     </div>
-  </mat-card-content>
-  <mat-card-actions>
+  </div>
+  <mat-action-row>
     <button mat-stroked-button (click)="addSelection()">
       <mat-icon>
         add_circle_outline
       </mat-icon>
     </button>
-    <button mat-stroked-button (click)="toggleOpen()">
-      <mat-icon>
-        all_out
-      </mat-icon>
-    </button>
-  </mat-card-actions>
-</mat-card>
+  </mat-action-row>
+</mat-expansion-panel>
