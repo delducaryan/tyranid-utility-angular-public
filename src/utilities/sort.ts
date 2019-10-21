@@ -1,4 +1,3 @@
-import { VariantName } from 'src/interfaces/models';
 import { getVariantName } from './object-helpers';
 
 export const compareByName = (
@@ -20,10 +19,16 @@ export const compareByName = (
 
 export const compareReferencesByVariantName = (
   a: {
-    reference: VariantName,
+    reference: {
+      name: string;
+      variant?: string;
+    },
   },
   b: {
-    reference: VariantName,
+    reference: {
+      name: string;
+      variant?: string;
+    },
   },
 ) => {
   if (getVariantName(a.reference) < getVariantName(b.reference)) {

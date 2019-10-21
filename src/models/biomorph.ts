@@ -1,8 +1,7 @@
 import { DocumentReference } from '@angular/fire/firestore';
-import { VariantName } from 'src/interfaces/models';
 import Book from './book';
 
-export default class Biomorph implements VariantName {
+export default class Biomorph {
   book: {
     page: number,
     reference: Book | DocumentReference,

@@ -19,7 +19,7 @@ export default class Unit {
   biomorphsLimited?: {
     options: {
       enabled: boolean,
-      limitPerUnit: number,
+      onePerModelCount: number,
       reference: Biomorph | DocumentReference,
     }[],
   }[];
@@ -48,7 +48,7 @@ export default class Unit {
   weaponsLimited?: {
     options: {
       enabled: boolean,
-      limitPerUnit: number,
+      onePerModelCount: number,
       optionReplaced: number,
       reference: Weapon | DocumentReference,
     }[]

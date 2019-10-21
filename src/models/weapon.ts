@@ -1,8 +1,7 @@
 import { DocumentReference } from '@angular/fire/firestore';
-import { VariantName } from 'src/interfaces/models';
 import Book from './book';
 
-export default class Weapon implements VariantName {
+export default class Weapon {
   ammunition: number;
   armourPenetration: number;
   book: {

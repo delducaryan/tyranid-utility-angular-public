@@ -24,7 +24,6 @@ import {
   startWith,
 } from 'rxjs/operators';
 
-import { VariantName } from 'src/interfaces/models';
 import { getVariantName } from 'src/utilities/object-helpers';
 import { compareReferencesByVariantName } from 'src/utilities/sort';
 import Biomorph from 'src/models/biomorph';
@@ -44,10 +43,15 @@ export class OptionSelectionComponent implements AfterViewInit {
       open: boolean
     ) => void,
   };
-  @Input() selectedOptions: BehaviorSubject<{
-    enabled: boolean,
-    reference: Biomorph | Weapon,
-  }[]>;
+  @Input() optionReplaced: boolean;
+  @Input() selectedOptions: BehaviorSubject<
+    {
+      enabled: boolean,
+      onePerModelCount?: number,
+      optionReplaced?: number,
+      reference: Biomorph | Weapon,
+    }[]
+  >;
   @Input() set setOptionsList(optionsList: (Biomorph | Weapon)[]) {
     this.optionsList = optionsList;
 
@@ -80,11 +84,12 @@ export class OptionSelectionComponent implements AfterViewInit {
   optionsList: (Biomorph | Weapon)[];
 
   constructor() {
-    this.chipFormControl = new FormControl();
     this.afterViewInit = {
       index: 0,
       method: () => { },
     };
+    this.chipFormControl = new FormControl();
+    this.optionReplaced = false;
     this.optionsList = [];
     this.selectedOptions = new BehaviorSubject([]);
     this.unitLimit = false;
@@ -138,7 +143,10 @@ export class OptionSelectionComponent implements AfterViewInit {
     }
   }
 
-  getVariantNameWrapper = (value: VariantName) => getVariantName(value);
+  getVariantNameWrapper = (value: {
+    name: string;
+    variant?: string;
+  }) => getVariantName(value)
 
   optionSelected = (event: MatAutocompleteSelectedEvent) => {
     const selectedOptionsValue = this.selectedOptions.value;

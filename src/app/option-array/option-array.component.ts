@@ -41,6 +41,8 @@ export class OptionArrayComponent implements OnInit {
     BehaviorSubject<
       {
         enabled: boolean,
+        onePerModelCount?: number,
+        optionReplaced?: number,
         reference: Biomorph | Weapon,
       }[]
     >[]

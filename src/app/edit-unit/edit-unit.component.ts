@@ -39,7 +39,7 @@ export class EditUnitComponent implements OnInit {
     BehaviorSubject<
       {
         enabled: boolean,
-        limitPerUnit: number,
+        onePerModelCount: number,
         reference: Biomorph,
       }[]
     >[]
@@ -58,7 +58,7 @@ export class EditUnitComponent implements OnInit {
       BehaviorSubject<
         {
           enabled: boolean,
-          limitPerUnit: number,
+          onePerModelCount: number,
           optionReplaced: number,
           reference: Weapon,
         }[]
@@ -131,7 +131,7 @@ export class EditUnitComponent implements OnInit {
       this.unit.biomorphsLimited.push({
         options: item.value as {
           enabled: boolean,
-          limitPerUnit: number,
+          onePerModelCount: number,
           reference: Biomorph,
         }[]
       });

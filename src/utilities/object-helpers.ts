@@ -1,6 +1,7 @@
-import { VariantName } from 'src/interfaces/models';
-
-export const getVariantName = (value: VariantName) => {
+export const getVariantName = (value: {
+  name: string;
+  variant?: string;
+}) => {
   if (value.variant) {
     return value.name + ' (' + value.variant + ')';
   } else {

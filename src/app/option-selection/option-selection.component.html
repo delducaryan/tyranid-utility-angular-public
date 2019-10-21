@@ -1,45 +1,72 @@
-<mat-form-field appearance="outline" class="full-width-form-field">
-  <mat-label>
-    Selection
-  </mat-label>
-  <mat-chip-list #chipList>
-    <mat-chip
-      *ngFor="let option of selectedOptions | async; index as i"
-      [color]="option['enabled'] ? 'primary' : ''"
-      [selected]="option['enabled'] ? true : false"
-      [removable]="true"
-      (click)="clickChip(i)"
-      (removed)="removeChip(i)"
-      (selectionChange)="selectionChangeChip($event, option['enabled'])"
-    >
-      {{getVariantNameWrapper(option.reference)}}
-      <mat-icon matChipRemove>
-        cancel
-      </mat-icon>
-    </mat-chip>
-    <input
-      #chipListInput
-      placeholder="New Option"
-      [formControl]="chipFormControl"
-      [matAutocomplete]="auto"
-      [matChipInputFor]="chipList"
-      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-      (blur)="clearInput()"
-    >
-  </mat-chip-list>
-  <mat-autocomplete
-    #auto="matAutocomplete"
-    autoActiveFirstOption
-    (optionSelected)="optionSelected($event)"
-  >
-    <mat-option *ngFor="let option of filteredOptions | async" [value]="option['index']">
-      {{option.value}}
-    </mat-option>
-  </mat-autocomplete>
-  <mat-hint *ngIf="!unitLimit">
-    Enabled: {{getEnabledName()}}
-  </mat-hint>
-  <mat-hint *ngIf="unitLimit">
-    UnitLimit Enabled
-  </mat-hint>
-</mat-form-field>
+<mat-grid-list cols="2" rowHeight="100px">
+  <mat-grid-tile [colspan]=2>
+    <mat-form-field appearance="outline" class="full-width-form-field">
+        <mat-label>
+          Selection
+        </mat-label>
+        <mat-chip-list #chipList>
+          <mat-chip
+            *ngFor="let option of selectedOptions | async; index as i"
+            [color]="option['enabled'] ? 'primary' : ''"
+            [selected]="option['enabled'] ? true : false"
+            [removable]="true"
+            (click)="clickChip(i)"
+            (removed)="removeChip(i)"
+            (selectionChange)="selectionChangeChip($event, option['enabled'])"
+          >
+            {{getVariantNameWrapper(option.reference)}}
+            <mat-icon matChipRemove>
+              cancel
+            </mat-icon>
+          </mat-chip>
+          <input
+            #chipListInput
+            placeholder="New Option"
+            [formControl]="chipFormControl"
+            [matAutocomplete]="auto"
+            [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (blur)="clearInput()"
+          >
+        </mat-chip-list>
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          autoActiveFirstOption
+          (optionSelected)="optionSelected($event)"
+        >
+          <mat-option *ngFor="let option of filteredOptions | async" [value]="option['index']">
+            {{option.value}}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-hint *ngIf="!unitLimit">
+          Enabled: {{getEnabledName()}}
+        </mat-hint>
+      </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile *ngIf="unitLimit">
+    <mat-form-field appearance="outline" class="full-width-form-field">
+      <mat-label>
+        One selection per # model
+      </mat-label>
+      <input
+        matInput
+        min="1"
+        type="number"
+        value="1"
+      >
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile *ngIf="optionReplaced">
+    <mat-form-field appearance="outline" class="full-width-form-field">
+      <mat-label>
+        Selection replaces
+      </mat-label>
+      <input
+        matInput
+        min="1"
+        type="number"
+        value="1"
+      >
+    </mat-form-field>
+  </mat-grid-tile>
+</mat-grid-list>
