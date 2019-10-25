@@ -9,12 +9,19 @@ import {
   Input,
   ViewChild,
 } from '@angular/core';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import {
+  MatAutocompleteSelectedEvent,
+  MatAutocompleteTrigger,
+  MatAutocomplete,
+} from '@angular/material/autocomplete';
 import {
   MatChipList,
   MatChipSelectionChange,
 } from '@angular/material/chips';
-import { FormControl } from '@angular/forms';
+import {
+  FormControl,
+  Validators,
+} from '@angular/forms';
 import {
   BehaviorSubject,
   Observable,
@@ -43,15 +50,12 @@ export class OptionSelectionComponent implements AfterViewInit {
       open: boolean
     ) => void,
   };
-  @Input() optionReplaced: boolean;
-  @Input() selectedOptions: BehaviorSubject<
-    {
-      enabled: boolean,
-      onePerModelCount?: number,
-      optionReplaced?: number,
-      reference: Biomorph | Weapon,
-    }[]
-  >;
+  @Input() onePerModelCount?: number;
+  @Input() optionReplaced?: number;
+  @Input() selectedOptions: BehaviorSubject<{
+    enabled: boolean,
+    reference: Biomorph | Weapon,
+  }[]>;
   @Input() set setOptionsList(optionsList: (Biomorph | Weapon)[]) {
     this.optionsList = optionsList;
 
@@ -66,9 +70,10 @@ export class OptionSelectionComponent implements AfterViewInit {
       }),
     );
   }
-  @Input() unitLimit: boolean;
 
   @ViewChild(MatChipList, { static: false }) chipList: MatChipList;
+  @ViewChild(MatAutocompleteTrigger, { static: false }) chipListAuto: MatAutocompleteTrigger;
+  @ViewChild(MatAutocomplete, { static: false }) chipListAutoC: MatAutocomplete;
   @ViewChild('chipListInput', { static: false }) chipListInput: ElementRef<HTMLInputElement>;
 
   readonly separatorKeysCodes: number[] = [
@@ -77,6 +82,9 @@ export class OptionSelectionComponent implements AfterViewInit {
   ];
 
   chipFormControl: FormControl;
+  numberInputFormControl: FormControl;
+  selectFormControl: FormControl;
+
   filteredOptions: Observable<{
     index: number,
     value: string,
@@ -89,30 +97,40 @@ export class OptionSelectionComponent implements AfterViewInit {
       method: () => { },
     };
     this.chipFormControl = new FormControl();
-    this.optionReplaced = false;
+    this.numberInputFormControl = new FormControl('', [
+      Validators.required,
+    ]);
+    this.selectFormControl = new FormControl();
+
     this.optionsList = [];
     this.selectedOptions = new BehaviorSubject([]);
-    this.unitLimit = false;
   }
 
   ngAfterViewInit() {
-    this.afterViewInit.method(this.afterViewInit.index, true);
+    const {
+      index,
+      method,
+    } = this.afterViewInit;
+
+    method(index, true);
   }
 
   clearInput = () => {
+    // Prevents clicking on autocomplete
     this.chipFormControl.setValue(null);
     this.chipListInput.nativeElement.value = '';
   }
 
   clickChip = (index: number) => {
-    if (this.selectedOptions.value[index].enabled) {
-      this.selectedOptions.value[index].enabled = false;
-    } else {
+    const enabled = this.selectedOptions.value[index].enabled;
+
+    if (!enabled) {
       this.selectedOptions.value.filter(value => value.enabled).forEach(value => {
         value.enabled = false;
       });
-      this.selectedOptions.value[index].enabled = true;
     }
+
+    this.selectedOptions.value[index].enabled = !enabled;
   }
 
   filterOptions = (value: string) => {
@@ -157,8 +175,7 @@ export class OptionSelectionComponent implements AfterViewInit {
     });
     selectedOptionsValue.sort(compareReferencesByVariantName);
     this.selectedOptions.next(selectedOptionsValue);
-    this.chipFormControl.setValue(null);
-    this.chipListInput.nativeElement.value = '';
+    this.clearInput();
   }
 
   removeChip = (index: number) => {

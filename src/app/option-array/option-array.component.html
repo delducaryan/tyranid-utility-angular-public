@@ -16,10 +16,10 @@
     <app-option-selection
       class="full-width-option-selection"
       [afterViewInit]="getAfterViewInitObject(i)"
-      [optionReplaced]=optionReplaced
-      [selectedOptions]=item
+      [onePerModelCount]=item.onePerModelCount
+      [optionReplaced]=item.optionReplaced
+      [selectedOptions]=item.options
       [setOptionsList]=optionsList
-      [unitLimit]=unitLimit
     >
     </app-option-selection>
     <div class="delete-button-wrapper">
@@ -35,7 +35,10 @@
     </div>
   </div>
   <mat-action-row>
-    <button mat-stroked-button (click)="addSelection()">
+    <button
+      mat-stroked-button
+      (click)="addSelection()"
+    >
       <mat-icon>
         add_circle_outline
       </mat-icon>

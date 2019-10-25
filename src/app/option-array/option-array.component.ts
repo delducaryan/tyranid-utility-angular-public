@@ -6,10 +6,10 @@ import {
   trigger,
 } from '@angular/animations';
 import {
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
-  ChangeDetectorRef,
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
@@ -37,30 +37,28 @@ import Weapon from 'src/models/weapon';
 })
 export class OptionArrayComponent implements OnInit {
 
-  @Input() data: BehaviorSubject<
-    BehaviorSubject<
-      {
-        enabled: boolean,
-        onePerModelCount?: number,
-        optionReplaced?: number,
-        reference: Biomorph | Weapon,
-      }[]
-    >[]
-  >;
+  @Input() data: BehaviorSubject<{
+    onePerModelCount?: number,
+    optionReplaced?: number,
+    options: BehaviorSubject<{
+      enabled: boolean,
+      reference: Biomorph | Weapon,
+    }[]>,
+  }[]>;
+  @Input() onePerModelCount: boolean;
   @Input() optionReplaced: boolean;
   @Input() optionsList: (Biomorph | Weapon)[];
   @Input() title: string;
-  @Input() unitLimit: boolean;
 
   selectionOpen: boolean[];
 
   constructor(private cdr: ChangeDetectorRef) {
-    this.data = new BehaviorSubject([]);
+    this.data = new BehaviorSubject([{ options: new BehaviorSubject([]) }]);
+    this.onePerModelCount = false;
     this.optionReplaced = false;
     this.optionsList = [];
     this.selectionOpen = [];
     this.title = '';
-    this.unitLimit = false;
   }
 
   ngOnInit() { }
@@ -68,7 +66,11 @@ export class OptionArrayComponent implements OnInit {
   addSelection = () => {
     const dataValue = this.data.value;
 
-    dataValue.push(new BehaviorSubject([]));
+    dataValue.push({
+      onePerModelCount: this.onePerModelCount ? 1 : undefined,
+      optionReplaced: this.optionReplaced ? 1 : undefined,
+      options: new BehaviorSubject([])
+    });
     this.data.next(dataValue);
     this.selectionOpen.push(false);
   }

@@ -35,45 +35,46 @@ export class EditUnitComponent implements OnInit {
 
   unit: Unit;
   abilitiesShared: Ability[];
-  biomorphsLimited: BehaviorSubject<
-    BehaviorSubject<
-      {
-        enabled: boolean,
-        onePerModelCount: number,
-        reference: Biomorph,
-      }[]
-    >[]
-  >;
+  biomorphsLimited: BehaviorSubject<{
+    onePerModelCount: number,
+    options: BehaviorSubject<{
+      enabled: boolean,
+      reference: Biomorph,
+    }[]>,
+  }[]>;
   biomorphsList: Biomorph[];
   books: Book[];
-  weapons: BehaviorSubject<
-    BehaviorSubject<
-      {
-        enabled: boolean,
-        reference: Weapon,
-      }[]
-    >[]
-  >;
-  weaponsLimited: BehaviorSubject<
-      BehaviorSubject<
-        {
-          enabled: boolean,
-          onePerModelCount: number,
-          optionReplaced: number,
-          reference: Weapon,
-        }[]
-      >[]
-  >;
+  weapons: BehaviorSubject<{
+    options: BehaviorSubject<{
+      enabled: boolean,
+      reference: Weapon,
+    }[]>,
+  }[]>;
+  weaponsLimited: BehaviorSubject<{
+    onePerModelCount: number,
+    optionReplaced: number,
+    options: BehaviorSubject<{
+      enabled: boolean,
+      reference: Weapon,
+    }[]>,
+  }[]>;
   weaponsList: Weapon[];
 
 
   constructor(private fs: FirestoreService) {
     this.abilitiesShared = [];
-    this.biomorphsLimited = new BehaviorSubject([new BehaviorSubject([])]);
+    this.biomorphsLimited = new BehaviorSubject([{
+      onePerModelCount: 1,
+      options: new BehaviorSubject([]),
+    }]);
     this.biomorphsList = [];
     this.books = [];
-    this.weapons = new BehaviorSubject([new BehaviorSubject([])]);
-    this.weaponsLimited = new BehaviorSubject([new BehaviorSubject([])]);
+    this.weapons = new BehaviorSubject([{ options: new BehaviorSubject([]) }]);
+    this.weaponsLimited = new BehaviorSubject([{
+      onePerModelCount: 1,
+      optionReplaced: 1,
+      options: new BehaviorSubject([]),
+    }]);
     this.weaponsList = [];
   }
 
@@ -129,13 +130,12 @@ export class EditUnitComponent implements OnInit {
 
     this.biomorphsLimited.value.forEach(item => {
       this.unit.biomorphsLimited.push({
-        options: item.value as {
-          enabled: boolean,
-          onePerModelCount: number,
-          reference: Biomorph,
-        }[]
+        onePerModelCount: 1,
+        options: item.options.value,
       });
     });
+
+    console.log(this.unit.biomorphsLimited);
   }
 
 }

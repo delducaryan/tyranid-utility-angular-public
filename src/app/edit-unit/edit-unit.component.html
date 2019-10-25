@@ -40,9 +40,24 @@
   <img mat-card-image src="../../assets/images/julio-nicoletti-julionicoletti-2016-tyranid-009.jpg">
   <mat-card-content>
     <mat-accordion class="accordion-headers-align">
-      <app-option-array [data]=biomorphsLimited [optionsList]=biomorphsList [title]="'Limited Biomorphs'" [unitLimit]="true"></app-option-array>
-      <app-option-array [data]=weapons [optionsList]=weaponsList [title]="'Weapons'"></app-option-array>
-      <app-option-array [data]=weaponsLimited [optionReplaced]="true" [optionsList]=weaponsList [title]="'Limited Weapons'" [unitLimit]="true"></app-option-array>
+      <app-option-array
+        [data]="biomorphsLimited"
+        [onePerModelCount]="true"
+        [optionsList]="biomorphsList"
+        [title]="'Limited Biomorphs'"
+      ></app-option-array>
+      <app-option-array
+        [data]="weapons"
+        [optionsList]="weaponsList"
+        [title]="'Weapons'"
+      ></app-option-array>
+      <app-option-array
+        [data]="weaponsLimited"
+        [onePerModelCount]="true"
+        [optionReplaced]="true"
+        [optionsList]="weaponsList"
+        [title]="'Limited Weapons'"
+      ></app-option-array>
     </mat-accordion>
   </mat-card-content>
   <mat-card-actions>
