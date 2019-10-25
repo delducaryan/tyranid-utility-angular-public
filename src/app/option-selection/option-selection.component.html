@@ -28,13 +28,13 @@
       [matAutocomplete]="chipListAuto"
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-      (blur)="clearInput()"
     >
   </mat-chip-list>
   <mat-autocomplete
     #chipListAuto="matAutocomplete"
     autoActiveFirstOption
     (optionSelected)="optionSelected($event)"
+    (closed)="clearInput()"
   >
     <mat-option
       *ngFor="let option of filteredOptions | async"

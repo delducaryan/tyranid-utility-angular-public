@@ -116,7 +116,6 @@ export class OptionSelectionComponent implements AfterViewInit {
   }
 
   clearInput = () => {
-    // Prevents clicking on autocomplete
     this.chipFormControl.setValue(null);
     this.chipListInput.nativeElement.value = '';
   }
@@ -183,7 +182,7 @@ export class OptionSelectionComponent implements AfterViewInit {
 
     selectedOptionsValue.splice(index, 1);
     this.selectedOptions.next(selectedOptionsValue);
-    this.chipFormControl.setValue(null);
+    this.clearInput();
   }
 
   selectionChangeChip = (event: MatChipSelectionChange, enabled: boolean) => {
