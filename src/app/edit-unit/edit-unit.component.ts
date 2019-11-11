@@ -126,16 +126,7 @@ export class EditUnitComponent implements OnInit {
   }
 
   clickSave = () => {
-    this.unit.biomorphsLimited = [];
-
-    this.biomorphsLimited.value.forEach(item => {
-      this.unit.biomorphsLimited.push({
-        onePerModelCount: 1,
-        options: item.options.value,
-      });
-    });
-
-    console.log(this.unit.biomorphsLimited);
+    
   }
 
 }

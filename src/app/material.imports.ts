@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 export const MaterialModules = [
@@ -27,5 +28,6 @@ export const MaterialModules = [
   MatListModule,
   MatSelectModule,
   MatSidenavModule,
+  MatSlideToggleModule,
   MatToolbarModule,
 ];

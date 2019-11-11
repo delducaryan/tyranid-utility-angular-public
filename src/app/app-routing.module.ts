@@ -5,26 +5,25 @@ import {
 } from '@angular/router';
 
 import { HomeComponent } from './home/home.component';
-import { EditUnitComponent } from './edit-unit/edit-unit.component';
 import { TestViewDataComponent } from './test-view-data/test-view-data.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
     pathMatch: 'full',
+    redirectTo: 'home',
   },
   {
-    path: 'home',
     component: HomeComponent,
+    path: 'home',
   },
   {
-    path: 'edit',
-    component: EditUnitComponent,
-  },
-  {
-    path: 'test',
     component: TestViewDataComponent,
+    path: 'test',
+  },
+  {
+    loadChildren: () => import('./edit/edit.module').then(m => m.EditModule),
+    path: 'edit',
   },
 ];
 

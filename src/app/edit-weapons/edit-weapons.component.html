@@ -1,0 +1,35 @@
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let item of data; index as i">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Title
+      </mat-panel-title>
+      <mat-panel-description>
+        Description
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-edit-weapons-form
+      [data]="item"
+      [setOptionsList]="weaponsList"
+    ></app-edit-weapons-form>
+    <mat-action-row>
+      <button
+        mat-stroked-button
+        color="warn"
+        (click)="removeSelection(i)"
+      >
+        <mat-icon>
+          delete_outline
+        </mat-icon>
+      </button>
+    </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>
+<button
+  mat-stroked-button
+  (click)="addSelection()"
+>
+  <mat-icon>
+    add_circle_outline
+  </mat-icon>
+</button>

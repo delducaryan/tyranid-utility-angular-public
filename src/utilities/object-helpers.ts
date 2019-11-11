@@ -8,3 +8,7 @@ export const getVariantName = (value: {
     return value.name;
   }
 };
+
+export const addPlurality = (value: string, count: number) => (
+  value + (count !== 1 ? 's' : '')
+);

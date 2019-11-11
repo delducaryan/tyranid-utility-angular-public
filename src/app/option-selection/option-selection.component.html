@@ -1,81 +1,92 @@
 
-<mat-form-field
-  appearance="outline"
-  class="full-width-form-field"
+<mat-grid-list
+  [cols]="isHandset ? 1 : 2"
+  [gutterSize]="isHandset ? 8 : 16"
+  [rowHeight]="80"
 >
-  <mat-label>
-    Selection
-  </mat-label>
-  <mat-chip-list #chipList>
-    <mat-chip
-      *ngFor="let option of selectedOptions | async; index as i"
-      [color]="option['enabled'] ? 'primary' : ''"
-      [selected]="option['enabled'] ? true : false"
-      [removable]="true"
-      (click)="clickChip(i)"
-      (removed)="removeChip(i)"
-      (selectionChange)="selectionChangeChip($event, option['enabled'])"
+  <mat-grid-tile [colspan]="isHandset ? 1 : 2">
+    <mat-form-field
+      appearance="outline"
+      class="full-width-form-field"
     >
-      {{getVariantNameWrapper(option.reference)}}
-      <mat-icon matChipRemove>
-        cancel
-      </mat-icon>
-    </mat-chip>
-    <input
-      #chipListInput
-      placeholder="New Option"
-      [formControl]="chipFormControl"
-      [matAutocomplete]="chipListAuto"
-      [matChipInputFor]="chipList"
-      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      <mat-label>
+        Selection
+      </mat-label>
+      <mat-chip-list #chipList>
+        <mat-chip
+          *ngFor="let option of selectedOptions | async; index as i"
+          [color]="option['enabled'] ? 'primary' : ''"
+          [selected]="option['enabled'] ? true : false"
+          [removable]="true"
+          (click)="clickChip(i)"
+          (removed)="removeChip(i)"
+          (selectionChange)="selectionChangeChip($event, option['enabled'])"
+        >
+          {{getVariantNameWrapper(option.reference)}}
+          <mat-icon matChipRemove>
+            cancel
+          </mat-icon>
+        </mat-chip>
+        <input
+          #chipListInput
+          placeholder="New Option"
+          [formControl]="chipFormControl"
+          [matAutocomplete]="chipListAuto"
+          [matChipInputFor]="chipList"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (blur)="blurInput()"
+        >
+      </mat-chip-list>
+      <mat-autocomplete
+        #chipListAuto="matAutocomplete"
+        autoActiveFirstOption
+        (closed)="clearInput()"
+        (optionSelected)="optionSelected($event)"
+      >
+        <mat-option
+          *ngFor="let option of filteredOptions | async"
+          [value]="option['index']"
+        >
+          {{option.value}}
+        </mat-option>
+      </mat-autocomplete>
+      <mat-hint *ngIf="!unitLimit">
+        Enabled: {{getEnabledName()}}
+      </mat-hint>
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field 
+      *ngIf="onePerModelCount"
+      appearance="outline"
+      class="full-width-form-field"
     >
-  </mat-chip-list>
-  <mat-autocomplete
-    #chipListAuto="matAutocomplete"
-    autoActiveFirstOption
-    (optionSelected)="optionSelected($event)"
-    (closed)="clearInput()"
-  >
-    <mat-option
-      *ngFor="let option of filteredOptions | async"
-      [value]="option['index']"
+      <mat-label>
+        One selection per # model
+      </mat-label>
+      <input
+        matInput
+        type="number"
+        [formControl]="numberInputFormControl"
+      >
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field 
+      *ngIf="optionReplaced"
+      appearance="outline"
+      class="full-width-form-field"
     >
-      {{option.value}}
-    </mat-option>
-  </mat-autocomplete>
-  <mat-hint *ngIf="!unitLimit">
-    Enabled: {{getEnabledName()}}
-  </mat-hint>
-</mat-form-field>
-<mat-form-field 
-  *ngIf="onePerModelCount"
-  appearance="outline" 
-  class="half-width-form-field-left"
->
-  <mat-label>
-    One selection per # model
-  </mat-label>
-  <input
-    matInput
-    min="1"
-    type="number"
-    value="1"
-    [formControl]="numberInputFormControl"
-  >
-</mat-form-field>
-<mat-form-field 
-  *ngIf="optionReplaced"
-  appearance="outline" 
-  class="half-width-form-field-right"
->
-  <mat-label>
-    Selection replaces
-  </mat-label>
-  <input
-    matInput
-    min="1"
-    type="number"
-    value="1"
-    required
-  >
-</mat-form-field>
+      <mat-label>
+        Selection replaces
+      </mat-label>
+      <input
+        matInput
+        min="1"
+        type="number"
+        value="1"
+        required
+      >
+    </mat-form-field>
+  </mat-grid-tile>
+</mat-grid-list>

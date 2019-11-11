@@ -18,8 +18,9 @@ import Biomorph from 'src/models/biomorph';
 import Book from 'src/models/book';
 import Unit from 'src/models/unit';
 import Weapon from 'src/models/weapon';
+import { compareByVariantName } from 'src/utilities/sort';
 
-const populateBookReferenceFromObject = (afs: AngularFirestore) => (
+const populateBookReferenceFromObject = (afs: AngularFirestore) => ( // USED
   (source: Observable<Ability | Biomorph | Unit | Weapon>) => (
     defer(() => {
       let parent: Ability | Biomorph | Unit | Weapon;
@@ -42,7 +43,7 @@ const populateBookReferenceFromObject = (afs: AngularFirestore) => (
   )
 );
 
-const getDocsAndAddressesFromOptionsArray = (
+const getDocsAndAddressesFromOptionsArray = ( // USED
   afs: AngularFirestore,
   unitIndex: number,
   unitCategory: string,
@@ -89,7 +90,7 @@ const getDocsAndAddressesFromOptionsArray = (
   });
 };
 
-const getDocsAndAddressesFromReferences = (
+const getDocsAndAddressesFromReferences = ( // USED
   afs: AngularFirestore,
   unitIndex: number,
   category: string,
@@ -197,28 +198,28 @@ const populateOptionArrayReferencesFromUnit = (afs: AngularFirestore, category: 
   )
 );
 
-const populateBiomorphReferencesFromUnit = (afs: AngularFirestore) => (
-  (source: Observable<Unit>) => (
-    defer(() => {
-      let parent: Unit;
+// const populateBiomorphReferencesFromUnit = (afs: AngularFirestore) => (
+//   (source: Observable<Unit>) => (
+//     defer(() => {
+//       let parent: Unit;
 
-      return source.pipe(
-        switchMap((data: Unit) => {
-          parent = new Unit(data);
+//       return source.pipe(
+//         switchMap((data: Unit) => {
+//           parent = new Unit(data);
 
-          return getDocsFromReferences(afs, parent.biomorphs.map((value) => value.reference) as DocumentReference[]);
-        }),
-        map((data: Biomorph[]) => {
-          data.forEach((biomorph, i) => {
-            parent.biomorphs[i].reference = biomorph;
-          });
+//           return getDocsFromReferences(afs, parent.biomorphs.map((value) => value.reference) as DocumentReference[]);
+//         }),
+//         map((data: Biomorph[]) => {
+//           data.forEach((biomorph, i) => {
+//             parent.biomorphs[i].reference = biomorph;
+//           });
 
-          return parent;
-        }),
-      );
-    })
-  )
-);
+//           return parent;
+//         }),
+//       );
+//     })
+//   )
+// );
 
 const populateSharedAbilityReferencesFromUnit = (afs: AngularFirestore) => (
   (source: Observable<Unit>) => (
@@ -243,10 +244,16 @@ const populateSharedAbilityReferencesFromUnit = (afs: AngularFirestore) => (
   )
 );
 
-export const populateBookReferencesFromList = (afs: AngularFirestore) => (
-  (source: Observable<(Ability | Biomorph | Unit | Weapon)[]>) => (
+export const populateBookReferencesFromList = (afs: AngularFirestore) => {
+  type Source = {
+    book: { reference: Book | DocumentReference },
+    name: string,
+    variant?: string,
+  }[];
+
+  return (source: Observable<Source>) => (
     defer(() => {
-      let parent: (Ability | Biomorph | Unit | Weapon)[];
+      let parent: Source;
 
       return source.pipe(
         switchMap((data: typeof parent) => {
@@ -270,162 +277,163 @@ export const populateBookReferencesFromList = (afs: AngularFirestore) => (
             parent[i].book.reference = book;
           });
 
-          return parent;
+          return parent.sort(compareByVariantName);
         }),
       );
     })
-  )
-);
+  );
+};
 
-export const populateUnitData = (afs: AngularFirestore) => (
-  (source: Observable<Unit>) => (
-    defer(() => (
-      source.pipe(
-        populateOptionArrayReferencesFromUnit(afs, 'biomorphsLimited'),
-        populateOptionArrayReferencesFromUnit(afs, 'weapons'),
-        populateOptionArrayReferencesFromUnit(afs, 'weaponsLimited'),
-        populateBiomorphReferencesFromUnit(afs),
-        populateBookReferenceFromObject(afs),
-        populateSharedAbilityReferencesFromUnit(afs),
-      )
-    ))
-  )
-);
+// export const populateUnitData = (afs: AngularFirestore) => (
+//   (source: Observable<Unit>) => (
+//     defer(() => (
+//       source.pipe(
+//         populateOptionArrayReferencesFromUnit(afs, 'biomorphsLimited'),
+//         populateOptionArrayReferencesFromUnit(afs, 'weapons'),
+//         populateOptionArrayReferencesFromUnit(afs, 'weaponsLimited'),
+//         populateBiomorphReferencesFromUnit(afs),
+//         populateBookReferenceFromObject(afs),
+//         populateSharedAbilityReferencesFromUnit(afs),
+//       )
+//     ))
+//   )
+// );
 
-export const populateUnitDataFromList = (afs: AngularFirestore) => (
-  (source: Observable<Unit[]>) => (
-    defer(() => {
-      const addresses: {
-        abilities: number[][],
-        biomorphs: number[][],
-        biomorphsLimited: number[][],
-        weapons: number[][],
-        weaponsLimited: number[][],
-      } = {
-        abilities: [],
-        biomorphs: [],
-        biomorphsLimited: [],
-        weapons: [],
-        weaponsLimited: [],
-      };
-      let parent: Unit[];
+// export const populateUnitDataFromList = (afs: AngularFirestore) => (
+//   (source: Observable<Unit[]>) => (
+//     defer(() => {
+//       const addresses: {
+//         abilities: number[][],
+//         biomorphs: number[][],
+//         biomorphsLimited: number[][],
+//         weapons: number[][],
+//         weaponsLimited: number[][],
+//       } = {
+//         abilities: [],
+//         biomorphs: [],
+//         biomorphsLimited: [],
+//         weapons: [],
+//         weaponsLimited: [],
+//       };
 
-      return source.pipe(
-        switchMap((data: typeof parent) => {
-          parent = data;
+//       let parent: Unit[];
 
-          const docs$: Observable<Ability | Biomorph | Weapon>[] = [];
-          const seenDocs: {
-            abilities: {
-              id: string,
-              index: number,
-            }[],
-            biomorphs: {
-              id: string,
-              index: number,
-            }[],
-            weapons: {
-              id: string,
-              index: number,
-            }[],
-          } = {
-            abilities: [],
-            biomorphs: [],
-            weapons: [],
-          };
+//       return source.pipe(
+//         switchMap((data: typeof parent) => {
+//           parent = data;
 
-          parent.forEach((unit, index) => {
-            if (unit.abilitiesShared) {
-              getDocsAndAddressesFromReferences(
-                afs,
-                index,
-                'abilities',
-                (unit.abilitiesShared as DocumentReference[]),
-                addresses,
-                seenDocs,
-                docs$
-              );
-            }
+//           const docs$: Observable<Ability | Biomorph | Weapon>[] = [];
+//           const seenDocs: {
+//             abilities: {
+//               id: string,
+//               index: number,
+//             }[],
+//             biomorphs: {
+//               id: string,
+//               index: number,
+//             }[],
+//             weapons: {
+//               id: string,
+//               index: number,
+//             }[],
+//           } = {
+//             abilities: [],
+//             biomorphs: [],
+//             weapons: [],
+//           };
 
-            if (unit.biomorphs) {
-              getDocsAndAddressesFromReferences(
-                afs,
-                index,
-                'biomorphs',
-                (unit.biomorphs.map(value => value.reference) as DocumentReference[]),
-                addresses,
-                seenDocs,
-                docs$
-              );
-            }
+//           parent.forEach((unit, index) => {
+//             if (unit.abilitiesShared) {
+//               getDocsAndAddressesFromReferences(
+//                 afs,
+//                 index,
+//                 'abilities',
+//                 (unit.abilitiesShared as DocumentReference[]),
+//                 addresses,
+//                 seenDocs,
+//                 docs$
+//               );
+//             }
 
-            if (unit.biomorphsLimited) {
-              getDocsAndAddressesFromOptionsArray(
-                afs,
-                index,
-                'biomorphsLimited',
-                'biomorphs',
-                unit.biomorphsLimited.map(value => value.options.map(option => option.reference) as DocumentReference[]),
-                addresses,
-                seenDocs,
-                docs$,
-              );
-            }
+//             if (unit.biomorphs) {
+//               getDocsAndAddressesFromReferences(
+//                 afs,
+//                 index,
+//                 'biomorphs',
+//                 (unit.biomorphs.map(value => value.reference) as DocumentReference[]),
+//                 addresses,
+//                 seenDocs,
+//                 docs$
+//               );
+//             }
 
-            if (unit.weapons) {
-              getDocsAndAddressesFromOptionsArray(
-                afs,
-                index,
-                'weapons',
-                'weapons',
-                unit.weapons.map(value => value.options.map(option => option.reference) as DocumentReference[]),
-                addresses,
-                seenDocs,
-                docs$,
-              );
-            }
+//             if (unit.biomorphsLimited) {
+//               getDocsAndAddressesFromOptionsArray(
+//                 afs,
+//                 index,
+//                 'biomorphsLimited',
+//                 'biomorphs',
+//                 unit.biomorphsLimited.map(value => value.options.map(option => option.reference) as DocumentReference[]),
+//                 addresses,
+//                 seenDocs,
+//                 docs$,
+//               );
+//             }
 
-            if (unit.weaponsLimited) {
-              getDocsAndAddressesFromOptionsArray(
-                afs,
-                index,
-                'weaponsLimited',
-                'weapons',
-                unit.weaponsLimited.map(value => value.options.map(option => option.reference) as DocumentReference[]),
-                addresses,
-                seenDocs,
-                docs$,
-              );
-            }
-          });
+//             if (unit.weapons) {
+//               getDocsAndAddressesFromOptionsArray(
+//                 afs,
+//                 index,
+//                 'weapons',
+//                 'weapons',
+//                 unit.weapons.map(value => value.options.map(option => option.reference) as DocumentReference[]),
+//                 addresses,
+//                 seenDocs,
+//                 docs$,
+//               );
+//             }
 
-          if (docs$.length === 0) {
-            return new BehaviorSubject([]);
-          }
+//             if (unit.weaponsLimited) {
+//               getDocsAndAddressesFromOptionsArray(
+//                 afs,
+//                 index,
+//                 'weaponsLimited',
+//                 'weapons',
+//                 unit.weaponsLimited.map(value => value.options.map(option => option.reference) as DocumentReference[]),
+//                 addresses,
+//                 seenDocs,
+//                 docs$,
+//               );
+//             }
+//           });
 
-          return combineLatest(docs$);
-        }),
-        map((data: (Ability | Biomorph | Weapon)[]) => {
-          addresses.abilities.forEach((address) => {
-            parent[address[0]].abilitiesShared[address[1]] = data[address[2]] as Ability;
-          });
-          addresses.biomorphs.forEach((address) => {
-            parent[address[0]].biomorphs[address[1]].reference = data[address[2]] as Biomorph;
-          });
-          addresses.biomorphsLimited.forEach((address) => {
-            parent[address[0]].biomorphsLimited[address[1]].options[address[2]].reference = data[address[3]] as Biomorph;
-          });
-          addresses.weapons.forEach((address) => {
-            parent[address[0]].weapons[address[1]].options[address[2]].reference = data[address[3]] as Weapon;
-          });
-          addresses.weaponsLimited.forEach((address) => {
-            parent[address[0]].weaponsLimited[address[1]].options[address[2]].reference = data[address[3]] as Weapon;
-          });
+//           if (docs$.length === 0) {
+//             return new BehaviorSubject([]);
+//           }
 
-          return parent;
-        }),
-        populateBookReferencesFromList(afs),
-      );
-    })
-  )
-);
+//           return combineLatest(docs$);
+//         }),
+//         map((data: (Ability | Biomorph | Weapon)[]) => {
+//           addresses.abilities.forEach((address) => {
+//             parent[address[0]].abilitiesShared[address[1]] = data[address[2]] as Ability;
+//           });
+//           addresses.biomorphs.forEach((address) => {
+//             parent[address[0]].biomorphs[address[1]].reference = data[address[2]] as Biomorph;
+//           });
+//           addresses.biomorphsLimited.forEach((address) => {
+//             parent[address[0]].biomorphsLimited[address[1]].options[address[2]].reference = data[address[3]] as Biomorph;
+//           });
+//           addresses.weapons.forEach((address) => {
+//             parent[address[0]].weapons[address[1]].options[address[2]].reference = data[address[3]] as Weapon;
+//           });
+//           addresses.weaponsLimited.forEach((address) => {
+//             parent[address[0]].weaponsLimited[address[1]].options[address[2]].reference = data[address[3]] as Weapon;
+//           });
+
+//           return parent;
+//         }),
+//         populateBookReferencesFromList(afs),
+//       );
+//     })
+//   )
+// );

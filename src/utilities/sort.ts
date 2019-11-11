@@ -17,6 +17,17 @@ export const compareByName = (
   }
 };
 
+export const compareByVariantName = (
+  a: {
+    name: string,
+    variant?: string,
+  },
+  b: {
+    name: string,
+    variant?: string,
+  },
+) => compareByName({ name: getVariantName(a) }, { name: getVariantName(b) });
+
 export const compareReferencesByVariantName = (
   a: {
     reference: {
@@ -30,12 +41,4 @@ export const compareReferencesByVariantName = (
       variant?: string;
     },
   },
-) => {
-  if (getVariantName(a.reference) < getVariantName(b.reference)) {
-    return -1;
-  } else if (getVariantName(a.reference) > getVariantName(b.reference)) {
-    return 1;
-  } else {
-    return 0;
-  }
-};
+) => compareByVariantName(a.reference, b.reference);

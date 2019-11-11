@@ -6,8 +6,8 @@ import {
 } from 'rxjs';
 import {
   populateBookReferencesFromList,
-  populateUnitData,
-  populateUnitDataFromList,
+  // populateUnitData,
+  // populateUnitDataFromList,
 } from './doc-join';
 import Ability from 'src/models/ability';
 import Biomorph from 'src/models/biomorph';
@@ -36,13 +36,13 @@ export class FirestoreService {
       populateBookReferencesFromList(afs)
     ) as Observable<Biomorph[]>;
     this.books$ = afs.collection<Book>('books').valueChanges({ idField: 'id'});
-    this.units$ = afs.collection<Unit>('units').valueChanges({ idField: 'id'}).pipe(
-      populateUnitDataFromList(afs)
-    ) as Observable<Unit[]>;
+    // this.units$ = afs.collection<Unit>('units').valueChanges({ idField: 'id'}).pipe(
+    //   populateUnitDataFromList(afs)
+    // ) as Observable<Unit[]>;
     this.weapons$ = afs.collection<Weapon>('weapons').valueChanges({ idField: 'id'}).pipe(
       populateBookReferencesFromList(afs)
     ) as Observable<Weapon[]>;
 
-    this.termagants$ = afs.doc('units/BPgy01fR5gc6oix96rBN').valueChanges().pipe(populateUnitData(afs));
+    // this.termagants$ = afs.doc('units/BPgy01fR5gc6oix96rBN').valueChanges().pipe(populateUnitData(afs));
   }
 }

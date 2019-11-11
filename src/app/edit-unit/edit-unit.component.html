@@ -1,66 +1,56 @@
-<mat-card>
-  <mat-card-header class="container">
-    <mat-card-title>
-      <mat-form-field appearance="outline" class="name-form-field full-width-form-field">
-        <mat-label>Name</mat-label>
-        <input
-          matInput
-          placeholder="New Unit"
-          value={{unit.name}}
-        >
-      </mat-form-field>
-    </mat-card-title>
-    <mat-card-subtitle>
-      <mat-form-field appearance="outline" class="full-width-form-field">
-        <mat-label>
-          Keywords
-        </mat-label>
-        <mat-chip-list #chipList>
-          <mat-chip
-            *ngFor="let keyword of unit.keywords.sort()"
-            [removable]="true"
-            (removed)="removeKeyword(keyword)"
-          >
-            {{keyword}}
-            <mat-icon matChipRemove>
-              cancel
-            </mat-icon>
-          </mat-chip>
-          <input
-            placeholder="New Keyword"
-            [matChipInputAddOnBlur]="true"
-            [matChipInputFor]="chipList"
-            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-            (matChipInputTokenEnd)="addKeyword($event)"
-          >
-        </mat-chip-list>
-      </mat-form-field>
-    </mat-card-subtitle>
-  </mat-card-header>
-  <img mat-card-image src="../../assets/images/julio-nicoletti-julionicoletti-2016-tyranid-009.jpg">
-  <mat-card-content>
-    <mat-accordion class="accordion-headers-align">
-      <app-option-array
-        [data]="biomorphsLimited"
-        [onePerModelCount]="true"
-        [optionsList]="biomorphsList"
-        [title]="'Limited Biomorphs'"
-      ></app-option-array>
-      <app-option-array
-        [data]="weapons"
-        [optionsList]="weaponsList"
-        [title]="'Weapons'"
-      ></app-option-array>
-      <app-option-array
-        [data]="weaponsLimited"
-        [onePerModelCount]="true"
-        [optionReplaced]="true"
-        [optionsList]="weaponsList"
-        [title]="'Limited Weapons'"
-      ></app-option-array>
-    </mat-accordion>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-stroked-button (click)="clickSave()">Save</button>
-  </mat-card-actions>
-</mat-card>
+<div class="container">
+  <!-- <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Name</mat-label>
+    <input
+      matInput
+      placeholder="New Unit"
+      value={{unit.name}}
+    >
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>
+      Keywords
+    </mat-label>
+    <mat-chip-list #chipList>
+      <mat-chip
+        *ngFor="let keyword of unit.keywords.sort()"
+        [removable]="true"
+        (removed)="removeKeyword(keyword)"
+      >
+        {{keyword}}
+        <mat-icon matChipRemove>
+          cancel
+        </mat-icon>
+      </mat-chip>
+      <input
+        placeholder="New Keyword"
+        [matChipInputAddOnBlur]="true"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="addKeyword($event)"
+      >
+    </mat-chip-list>
+  </mat-form-field> -->
+  <app-edit-weapons></app-edit-weapons>
+  <!-- <mat-accordion class="accordion-headers-align">
+    <app-option-array
+      [data]="biomorphsLimited"
+      [onePerModelCount]="true"
+      [optionsList]="biomorphsList"
+      [title]="'Limited Biomorphs'"
+    ></app-option-array>
+    <app-option-array
+      [data]="weapons"
+      [optionsList]="weaponsList"
+      [title]="'Weapons'"
+    ></app-option-array>
+    <app-option-array
+      [data]="weaponsLimited"
+      [onePerModelCount]="true"
+      [optionReplaced]="true"
+      [optionsList]="weaponsList"
+      [title]="'Limited Weapons'"
+    ></app-option-array>
+  </mat-accordion>
+  <button mat-stroked-button (click)="clickSave()">Save</button> -->
+</div>

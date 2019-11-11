@@ -3,6 +3,10 @@ import {
   ENTER,
 } from '@angular/cdk/keycodes';
 import {
+  BreakpointObserver,
+  Breakpoints,
+} from '@angular/cdk/layout';
+import {
   AfterViewInit,
   Component,
   ElementRef,
@@ -50,12 +54,18 @@ export class OptionSelectionComponent implements AfterViewInit {
       open: boolean
     ) => void,
   };
-  @Input() onePerModelCount?: number;
-  @Input() optionReplaced?: number;
   @Input() selectedOptions: BehaviorSubject<{
     enabled: boolean,
     reference: Biomorph | Weapon,
   }[]>;
+  @Input() set setOnePerModelCount(onePerModelCount: number) {
+    this.onePerModelCount = onePerModelCount;
+    this.numberInputFormControl.setValue(onePerModelCount);
+  }
+  @Input() set setOptionReplaced(optionReplaced: number) {
+    this.optionReplaced = optionReplaced;
+    this.selectFormControl.setValue(optionReplaced);
+  }
   @Input() set setOptionsList(optionsList: (Biomorph | Weapon)[]) {
     this.optionsList = optionsList;
 
@@ -72,8 +82,8 @@ export class OptionSelectionComponent implements AfterViewInit {
   }
 
   @ViewChild(MatChipList, { static: false }) chipList: MatChipList;
-  @ViewChild(MatAutocompleteTrigger, { static: false }) chipListAuto: MatAutocompleteTrigger;
-  @ViewChild(MatAutocomplete, { static: false }) chipListAutoC: MatAutocomplete;
+  @ViewChild(MatAutocomplete, { static: false }) chipListAuto: MatAutocomplete;
+  @ViewChild(MatAutocompleteTrigger, { static: false }) chipListAutoTrigger: MatAutocompleteTrigger;
   @ViewChild('chipListInput', { static: false }) chipListInput: ElementRef<HTMLInputElement>;
 
   readonly separatorKeysCodes: number[] = [
@@ -89,21 +99,33 @@ export class OptionSelectionComponent implements AfterViewInit {
     index: number,
     value: string,
   }[]>;
+  isHandset: boolean;
+  onePerModelCount?: number;
+  optionReplaced?: number;
   optionsList: (Biomorph | Weapon)[];
 
-  constructor() {
+  constructor(breakpointObserver: BreakpointObserver) {
     this.afterViewInit = {
       index: 0,
       method: () => { },
     };
+
     this.chipFormControl = new FormControl();
     this.numberInputFormControl = new FormControl('', [
       Validators.required,
+      Validators.min(1),
     ]);
     this.selectFormControl = new FormControl();
 
+    this.isHandset = false;
     this.optionsList = [];
     this.selectedOptions = new BehaviorSubject([]);
+
+    breakpointObserver.observe([
+      Breakpoints.HandsetPortrait,
+    ]).subscribe(result => {
+      this.isHandset = result.matches;
+    });
   }
 
   ngAfterViewInit() {
@@ -113,6 +135,12 @@ export class OptionSelectionComponent implements AfterViewInit {
     } = this.afterViewInit;
 
     method(index, true);
+  }
+
+  blurInput = () => {
+    if (!this.chipListAuto.isOpen) {
+      this.clearInput();
+    }
   }
 
   clearInput = () => {

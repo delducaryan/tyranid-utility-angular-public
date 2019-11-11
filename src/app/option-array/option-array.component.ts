@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+import { addPlurality } from 'src/utilities/object-helpers';
 import Biomorph from 'src/models/biomorph';
 import Weapon from 'src/models/weapon';
 
@@ -62,6 +63,8 @@ export class OptionArrayComponent implements OnInit {
   }
 
   ngOnInit() { }
+
+  addPluralityWrapper = (value: string, count: number) => addPlurality(value, count);
 
   addSelection = () => {
     const dataValue = this.data.value;

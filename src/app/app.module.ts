@@ -14,21 +14,27 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { EditUnitComponent } from './edit-unit/edit-unit.component';
+import { EditWeaponsComponent } from './edit-weapons/edit-weapons.component';
+import { EditWeaponsFormComponent } from './edit-weapons-form/edit-weapons-form.component';
 import { HomeComponent } from './home/home.component';
 import { OptionArrayComponent } from './option-array/option-array.component';
 import { OptionSelectionComponent } from './option-selection/option-selection.component';
 import { NavComponent } from './nav/nav.component';
 import { TestViewDataComponent } from './test-view-data/test-view-data.component';
+import { EditAbilityComponent } from './edit-ability/edit-ability.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     EditUnitComponent,
+    EditWeaponsComponent,
+    EditWeaponsFormComponent,
     HomeComponent,
     OptionArrayComponent,
     OptionSelectionComponent,
     NavComponent,
     TestViewDataComponent,
+    EditAbilityComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),

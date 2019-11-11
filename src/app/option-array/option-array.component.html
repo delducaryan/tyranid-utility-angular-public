@@ -4,36 +4,39 @@
       {{title}}
     </mat-panel-title>
     <mat-panel-description>
-      Temporary description
+      {{addPluralityWrapper((data.value.length + ' Selection'), data.value.length)}}
     </mat-panel-description>
   </mat-expansion-panel-header>
-  <div
-    *ngFor="let item of data | async; index as i"
-    class="flex-container"
-    [@collapse]="selectionOpen[i] ? 'open' : 'closed'"
-    (@collapse.done)="!selectionOpen[i] ? removeSelection(i) : ''"
-  >
-    <app-option-selection
-      class="full-width-option-selection"
-      [afterViewInit]="getAfterViewInitObject(i)"
-      [onePerModelCount]=item.onePerModelCount
-      [optionReplaced]=item.optionReplaced
-      [selectedOptions]=item.options
-      [setOptionsList]=optionsList
-    >
-    </app-option-selection>
-    <div class="delete-button-wrapper">
-      <button
-        mat-stroked-button
-        color="warn"
-        (click)="animateSelection(i, false)"
+  <ol>
+    <li *ngFor="let item of data | async; index as i">
+      <div
+        class="flex-container"
+        [@collapse]="selectionOpen[i] ? 'open' : 'closed'"
+        (@collapse.done)="!selectionOpen[i] ? removeSelection(i) : ''"
       >
-        <mat-icon>
-          delete_outline
-        </mat-icon>
-      </button>
-    </div>
-  </div>
+        <app-option-selection
+          class="full-width-option-selection"
+          [afterViewInit]="getAfterViewInitObject(i)"
+          [selectedOptions]=item.options
+          [setOnePerModelCount]=item.onePerModelCount
+          [setOptionReplaced]=item.optionReplaced
+          [setOptionsList]=optionsList
+        >
+        </app-option-selection>
+        <div class="delete-button-wrapper">
+          <button
+            mat-stroked-button
+            color="warn"
+            (click)="animateSelection(i, false)"
+          >
+            <mat-icon>
+              delete_outline
+            </mat-icon>
+          </button>
+        </div>
+      </div>
+    </li>
+  </ol>
   <mat-action-row>
     <button
       mat-stroked-button

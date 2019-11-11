@@ -3,6 +3,7 @@ import Ability from './ability';
 import Biomorph from './biomorph';
 import Book from './book';
 import Weapon from './weapon';
+import { compareByVariantName, compareReferencesByVariantName } from 'src/utilities/sort';
 
 export default class Unit {
   abilities?: {
@@ -13,16 +14,18 @@ export default class Unit {
   attacks: number;
   ballisticSkill: number;
   biomorphs?: {
-    enabled: boolean,
-    reference: Biomorph | DocumentReference,
-  }[];
-  biomorphsLimited?: {
-    onePerModelCount: number,
+    limited?: {
+      onePerModelCount: number,
+      options: {
+        enabled: boolean,
+        reference: Biomorph | DocumentReference,
+      }[],
+    }[],
     options: {
       enabled: boolean,
       reference: Biomorph | DocumentReference,
     }[],
-  }[];
+  };
   book: {
     page: number,
     reference: Book | DocumentReference,
@@ -40,18 +43,17 @@ export default class Unit {
   unitCapacity: number;
   weaponSkill: number;
   weapons?: {
+    limited?: {
+      onePerModelCount: number,
+      options: {
+        enabled: boolean,
+        reference: Weapon | DocumentReference,
+      }[],
+    },
     options: {
       enabled: boolean,
       reference: Weapon | DocumentReference,
-    }[]
-  }[];
-  weaponsLimited?: {
-    onePerModelCount: number,
-    optionReplaced: number,
-    options: {
-      enabled: boolean,
-      reference: Weapon | DocumentReference,
-    }[]
+    }[],
   }[];
   wounds: number;
 
@@ -62,7 +64,6 @@ export default class Unit {
       attacks: 1,
       ballisticSkill: 4,
       biomorphs: [],
-      biomorphsLimited: [],
       book: new Book(),
       id: '',
       keywords: [],
@@ -77,7 +78,6 @@ export default class Unit {
       unitCapacity: 3,
       weaponSkill: 4,
       weapons: [],
-      weaponsLimited: [],
       wounds: 1,
       ...unit,
     };
@@ -95,45 +95,45 @@ export default class Unit {
     ).sort()
   )
 
-  getBiomorphNames = () => (
-    this.biomorphs.map(option => (
-      (option.reference as Biomorph).name
-    )).sort()
-  )
+  // getBiomorphNames = () => (
+  //   this.biomorphs.map(option => (
+  //     (option.reference as Biomorph).name
+  //   )).sort()
+  // )
 
-  getLimitedBiomorphNames = (idx: number) => (
-    this.biomorphsLimited[idx].options.map(option => (
-      (option.reference as Biomorph).name
-    )).sort()
-  )
+  // getLimitedBiomorphNames = (idx: number) => (
+  //   this.biomorphsLimited[idx].options.map(option => (
+  //     (option.reference as Biomorph).name
+  //   )).sort()
+  // )
 
-  getWeaponNames = (idx: number) => (
-    this.weapons[idx].options.map(option => (
-      (option.reference as Weapon).name
-    )).sort()
-  )
+  // getWeaponNames = (idx: number) => (
+  //   this.weapons[idx].options.map(option => (
+  //     (option.reference as Weapon).name
+  //   )).sort()
+  // )
 
-  getLimitedWeaponNames = (idx: number) => (
-    this.weaponsLimited[idx].options.map(option => (
-      (option.reference as Weapon).name
-    )).sort()
-  )
+  // getLimitedWeaponNames = (idx: number) => (
+  //   this.weapons[idx].limited.options.map(option => (
+  //     (option.reference as Weapon).name
+  //   )).sort()
+  // )
 
-  getEnabledBiomorphs = () => (
-    this.biomorphs.filter(biomorph => biomorph.enabled).concat(
-      this.biomorphsLimited.map(item => (
-        item.options.find(option => option.enabled)
-      ))
-    ).sort()
-  )
+  getEnabledBiomorphs = () => {
+    const enabledBiomorphs = [];
+
+    enabledBiomorphs.concat(this.biomorphs.options.filter(option => option.enabled));
+
+    this.biomorphs.limited.forEach(item => {
+      enabledBiomorphs.concat(item.options.filter(value => value.enabled));
+    });
+
+    return enabledBiomorphs.sort(compareByVariantName);
+  }
 
   getEnabledWeapons = () => (
-    this.weapons.map(item => (
-      item.options.find(option => option.enabled)
-    )).concat(
-      this.weaponsLimited.map(item => (
-        item.options.find(option => option.enabled)
-      ))
-    ).sort()
+    (this.weapons.map(item => (
+      (item.options.find(option => option.enabled) || item.limited.options.find(option => option.enabled)) as { reference: Weapon }
+    ))).sort(compareReferencesByVariantName)
   )
 }
