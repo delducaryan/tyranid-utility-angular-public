@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ReactiveFormsModule } from '@angular/forms';
 
-import MaterialModules from './material.imports';
+import { MaterialModules } from './material.imports';
 
 import { EditRoutingModule } from './edit-routing.module';
 
@@ -16,11 +15,10 @@ import { EditComponent } from './edit.component';
     EditComponent,
   ],
   imports: [
-    BrowserAnimationsModule,
-    BrowserModule,
     CommonModule,
     EditRoutingModule,
     MaterialModules,
+    ReactiveFormsModule,
   ]
 })
 export class EditModule { }

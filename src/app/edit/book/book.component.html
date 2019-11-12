@@ -1,5 +1,23 @@
-<form>
-  <mat-form-field>
-    
+<form [formGroup]="bookForm">
+  <mat-form-field
+    appearance="outline"
+    class="full-width"
+  >
+    <mat-label>
+      Name
+    </mat-label>
+    <input
+      matInput
+      formControlName="name"
+    >
   </mat-form-field>
+  <button
+    mat-stroked-button
+    (click)="save()"
+  >
+    <mat-icon>
+      save
+    </mat-icon>
+    Save
+  </button>
 </form>

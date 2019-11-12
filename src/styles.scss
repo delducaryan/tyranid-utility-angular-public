@@ -1,8 +1,13 @@
 @import '~@angular/material/prebuilt-themes/purple-green.css';
 
-* {
+html {
+  height: 100%;
+}
+
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  height: 100%;
   margin: 0;
-  padding: 0;
 }
 
 .full-width {
