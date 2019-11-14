@@ -9,6 +9,7 @@ import {
   // populateUnitData,
   // populateUnitDataFromList,
 } from './doc-join';
+
 import Ability from 'src/models/ability';
 import Biomorph from 'src/models/biomorph';
 import Book from 'src/models/book';
@@ -45,4 +46,8 @@ export class FirestoreService {
 
     // this.termagants$ = afs.doc('units/BPgy01fR5gc6oix96rBN').valueChanges().pipe(populateUnitData(afs));
   }
+
+  bookAdd = (book: Book) => this.afs.collection('books').add(book);
+
+  bookUpdate = (book: Book) => null;
 }

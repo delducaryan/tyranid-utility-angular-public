@@ -18,7 +18,6 @@ import Biomorph from 'src/models/biomorph';
 import Book from 'src/models/book';
 import Unit from 'src/models/unit';
 import Weapon from 'src/models/weapon';
-import { compareByVariantName } from 'src/utilities/sort';
 
 const populateBookReferenceFromObject = (afs: AngularFirestore) => ( // USED
   (source: Observable<Ability | Biomorph | Unit | Weapon>) => (
@@ -277,7 +276,7 @@ export const populateBookReferencesFromList = (afs: AngularFirestore) => {
             parent[i].book.reference = book;
           });
 
-          return parent.sort(compareByVariantName);
+          return parent;
         }),
       );
     })

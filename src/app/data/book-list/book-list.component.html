@@ -1,0 +1,38 @@
+<table
+  matSort
+  mat-table
+  [dataSource]="bookList"
+>
+  <ng-container matColumnDef="name">
+    <th
+      *matHeaderCellDef
+      mat-header-cell
+      mat-sort-header
+    >
+      Name
+    </th>
+    <td *matCellDef="let row" mat-cell >
+      {{row.name}}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <th
+      *matHeaderCellDef
+      mat-header-cell
+      mat-sort-header
+    >
+      Actions
+    </th>
+    <td *matCellDef="let row" mat-cell >
+      <button mat-stroked-button (click)="click(row)">
+        Click
+      </button>
+    </td>
+  </ng-container>
+
+  <tr *matHeaderRowDef="['name', 'actions']" mat-header-row></tr>
+  <tr *matRowDef="let row; columns: ['name', 'actions']" mat-row></tr>
+
+</table>
+
+<mat-paginator [pageSizeOptions]="[2]"></mat-paginator>

@@ -22,8 +22,8 @@ const routes: Routes = [
     path: 'test',
   },
   {
-    loadChildren: () => import('./edit/edit.module').then(m => m.EditModule),
-    path: 'edit',
+    loadChildren: () => import('./data/data.module').then(m => m.DataModule),
+    path: 'data',
   },
 ];
 

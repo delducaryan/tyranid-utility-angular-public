@@ -1,11 +1,10 @@
 export default class Book {
-  id: string;
+  id?: string;
   name: string;
 
   constructor(book?: Partial<Book>) {
     const init = {
-      id: '',
-      name: 'Codex: Tyranids',
+      name: '',
       ...book,
     };
 
