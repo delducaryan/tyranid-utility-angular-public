@@ -1,23 +1,31 @@
-<h1>
-  {{id ? 'Edit' : 'Add'}} Book
-</h1>
-<form [formGroup]="bookForm">
-  <mat-form-field
-    appearance="outline"
-    class="full-width"
-  >
-    <mat-label>
-      Name
-    </mat-label>
-    <input
-      matInput
-      formControlName="name"
-    >
-  </mat-form-field>
-  <button
-    mat-stroked-button
-    (click)="clickSave()"
-  >
-    Save
+<div>
+  <button mat-stroked-button (click)="clickToList()">
+    <mat-icon>
+      arrow_back
+    </mat-icon>
+    Back To List
   </button>
-</form>
+  <h1>
+    {{id ? 'Edit' : 'Add'}} Book
+  </h1>
+  <form [formGroup]="bookForm">
+    <mat-form-field
+      appearance="outline"
+      class="full-width"
+    >
+      <mat-label>
+        Name
+      </mat-label>
+      <input
+        matInput
+        formControlName="name"
+      >
+    </mat-form-field>
+    <button
+      mat-stroked-button
+      (click)="clickSave()"
+    >
+      Save
+    </button>
+  </form>
+</div>

@@ -3,6 +3,11 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { 
+  MatSnackBar,
+  MatSnackBarConfig,
+} from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 import { DataStoreService } from '../data-store.service';
 import { FirestoreService } from 'src/app/firestore.service';
@@ -16,21 +21,24 @@ import Book from 'src/models/book';
 })
 export class BookEditComponent implements OnInit {
 
-  bookForm = this.fb.group(new Book());
+  bookForm = this.formBuilder.group(new Book());
 
   id: string;
 
   constructor(
-    private ds: DataStoreService,
-    private fs: FirestoreService,
-    private fb: FormBuilder
+    private dataStore: DataStoreService,
+    private firestore: FirestoreService,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private snackbar: MatSnackBar,
   ) { }
 
   ngOnInit() {
-    if (this.ds.book) {
-      this.id = this.ds.book.id;
+    if (this.dataStore.book) {
+      const data = this.dataStore.book;
 
-      const data = this.ds.book;
+      this.dataStore.book = undefined;
+      this.id = data.id;
 
       delete data.id;
 
@@ -39,19 +47,51 @@ export class BookEditComponent implements OnInit {
   }
 
   clickSave = () => {
+    const snackbarConfig = new MatSnackBarConfig();
+
+    let snackbarMessage;
+
+    snackbarConfig.duration = 3000;
+
     if (this.id) {
       // Update
 
+      this.firestore.updateBook({
+        id: this.id,
+        ...this.bookForm.value,
+      })
+        .then(() => {
+          snackbarMessage = 'Book updated successfully';
+          snackbarConfig.panelClass = ['snackbar-success'];
+        })
+        .catch(e => {
+          snackbarMessage = 'Failed to update book';
+          snackbarConfig.panelClass = ['snackbar-fail'];
 
+          console.log(e);
+        })
+        .finally(() => this.snackbar.open(snackbarMessage, undefined, snackbarConfig));
     } else {
       // Add
 
-      this.fs.bookAdd(this.bookForm.value)
+      this.firestore.addBook(this.bookForm.value)
         .then(value => {
-          console.log('Success!');
-          console.log(value.id);
-        });
+          this.id = value.id;
+          snackbarMessage = 'Book added successfully';
+          snackbarConfig.panelClass = ['snackbar-success'];
+        })
+        .catch(e => {
+          snackbarMessage = 'Failed to add book';
+          snackbarConfig.panelClass = ['snackbar-fail'];
+
+          console.log(e);
+        })
+        .finally(() => this.snackbar.open(snackbarMessage, undefined, snackbarConfig));
     }
+  }
+
+  clickToList = () => {
+    this.router.navigateByUrl('/data/list-book');
   }
 
 }

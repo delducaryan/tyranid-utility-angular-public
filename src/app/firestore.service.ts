@@ -21,33 +21,35 @@ import Weapon from 'src/models/weapon';
 })
 export class FirestoreService {
 
-  abilities$: Observable<Ability[]>;
-  biomorphs$: Observable<Biomorph[]>;
-  books$: Observable<Book[]>;
+  abilities$ = new BehaviorSubject<Ability[]>([]);
+  biomorphs$ = new BehaviorSubject<Biomorph[]>([]);
+  books$ = new BehaviorSubject<Book[]>([]);
   units$: Observable<Unit[]>;
-  weapons$: Observable<Weapon[]>;
+  weapons$ = new BehaviorSubject<Weapon[]>([]);
 
   termagants$: Observable<unknown>;
 
   constructor(private afs: AngularFirestore) {
-    this.abilities$ = afs.collection<Ability>('abilities').valueChanges({ idField: 'id'}).pipe(
+    afs.collection<Ability>('abilities').valueChanges({ idField: 'id'}).pipe(
       populateBookReferencesFromList(afs)
-    ) as Observable<Ability[]>;
-    this.biomorphs$ = afs.collection<Biomorph>('biomorphs').valueChanges({ idField: 'id'}).pipe(
+    ).subscribe((value: Ability[]) => this.abilities$.next(value));
+    afs.collection<Biomorph>('biomorphs').valueChanges({ idField: 'id'}).pipe(
       populateBookReferencesFromList(afs)
-    ) as Observable<Biomorph[]>;
-    this.books$ = afs.collection<Book>('books').valueChanges({ idField: 'id'});
+    ).subscribe((value: Biomorph[]) => this.biomorphs$.next(value));
+    afs.collection<Book>('books').valueChanges({ idField: 'id'}).subscribe(value => this.books$.next(value));
     // this.units$ = afs.collection<Unit>('units').valueChanges({ idField: 'id'}).pipe(
     //   populateUnitDataFromList(afs)
     // ) as Observable<Unit[]>;
-    this.weapons$ = afs.collection<Weapon>('weapons').valueChanges({ idField: 'id'}).pipe(
+    afs.collection<Weapon>('weapons').valueChanges({ idField: 'id'}).pipe(
       populateBookReferencesFromList(afs)
-    ) as Observable<Weapon[]>;
+    ).subscribe((value: Weapon[]) => this.weapons$.next(value));
 
     // this.termagants$ = afs.doc('units/BPgy01fR5gc6oix96rBN').valueChanges().pipe(populateUnitData(afs));
   }
 
-  bookAdd = (book: Book) => this.afs.collection('books').add(book);
+  addBook = (book: Book) => this.afs.collection('books').add(book);
 
-  bookUpdate = (book: Book) => null;
+  deleteBook = (id: string) => this.afs.collection('books').doc(id).delete();
+
+  updateBook = (book: Book) => this.afs.collection('books').doc(book.id).update(book);
 }

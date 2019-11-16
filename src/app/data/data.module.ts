@@ -6,15 +6,20 @@ import { MaterialModules } from './material.imports';
 
 import { DataRoutingModule } from './data-routing.module';
 
+import { BookDialogComponent } from './book-dialog/book-dialog.component';
 import { BookEditComponent } from './book-edit/book-edit.component';
 import { BookListComponent } from './book-list/book-list.component';
 import { DataComponent } from './data.component';
 
 @NgModule({
   declarations: [
+    BookDialogComponent,
     BookEditComponent,
     BookListComponent,
     DataComponent,
+  ],
+  entryComponents: [
+    BookDialogComponent,
   ],
   imports: [
     CommonModule,

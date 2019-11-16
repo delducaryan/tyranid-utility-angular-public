@@ -1,38 +1,51 @@
-<table
-  matSort
-  mat-table
-  [dataSource]="bookList"
->
-  <ng-container matColumnDef="name">
-    <th
-      *matHeaderCellDef
-      mat-header-cell
-      mat-sort-header
-    >
-      Name
-    </th>
-    <td *matCellDef="let row" mat-cell >
-      {{row.name}}
-    </td>
-  </ng-container>
-  <ng-container matColumnDef="actions">
-    <th
-      *matHeaderCellDef
-      mat-header-cell
-      mat-sort-header
-    >
-      Actions
-    </th>
-    <td *matCellDef="let row" mat-cell >
-      <button mat-stroked-button (click)="click(row)">
-        Click
-      </button>
-    </td>
-  </ng-container>
+<div class="container">
+  <table
+    mat-table
+    matSort
+    [dataSource]="dataSource"
+  >
+    <ng-container matColumnDef="name">
+      <th
+        *matHeaderCellDef
+        mat-header-cell
+        mat-sort-header
+      >
+        Name
+      </th>
+      <td *matCellDef="let row" mat-cell>
+        {{row.name}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th
+        *matHeaderCellDef
+        mat-header-cell
+      ></th>
+      <td *matCellDef="let row" mat-cell>
+        <button mat-stroked-button (click)="clickEdit(row)">
+          <mat-icon>
+            edit
+          </mat-icon>
+        </button>
+        <button mat-stroked-button (click)="clickDelete(row)">
+          <mat-icon>
+            delete
+          </mat-icon>
+        </button>
+      </td>
+    </ng-container>
 
-  <tr *matHeaderRowDef="['name', 'actions']" mat-header-row></tr>
-  <tr *matRowDef="let row; columns: ['name', 'actions']" mat-row></tr>
+    <tr *matHeaderRowDef="['name', 'actions']" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: ['name', 'actions']" mat-row></tr>
 
-</table>
+  </table>
 
-<mat-paginator [pageSizeOptions]="[2]"></mat-paginator>
+  <mat-paginator [pageSize]="2"></mat-paginator>
+  
+  <button mat-stroked-button (click)="clickAdd()">
+    <mat-icon>
+      add
+    </mat-icon>
+    Add Book
+  </button>
+</div>
