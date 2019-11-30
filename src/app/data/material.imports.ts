@@ -5,7 +5,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
@@ -17,7 +16,6 @@ export const MaterialModules = [
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
-  MatMenuModule,
   MatRippleModule,
   MatSnackBarModule,
   MatSortModule,

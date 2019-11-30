@@ -18,6 +18,9 @@
       </td>
       <td *matFooterCellDef mat-footer-cell>
         <button mat-stroked-button (click)="clickAdd()">
+          <mat-icon [inline]="true">
+            add
+          </mat-icon>
           Add Book
         </button>
       </td>
@@ -26,11 +29,22 @@
     <ng-container matColumnDef="expandedDetail">
       <td *matCellDef="let row" mat-cell>
         <div [@expandDetails]="expandedId === row.id" class="detail-container">
+          <mat-divider></mat-divider>
           <div class="detail-actions-container">
             <button mat-stroked-button (click)="clickEdit(row)">
+              <mat-icon [inline]="true">
+                edit
+              </mat-icon>
               Edit
             </button>
-            <button mat-stroked-button (click)="clickDelete(row)">
+            <button
+              mat-stroked-button
+              color="warn"
+              (click)="clickDelete(row)"
+            >
+              <mat-icon [inline]="true">
+                delete
+              </mat-icon>
               Delete
             </button>
           </div>

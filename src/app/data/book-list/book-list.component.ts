@@ -72,42 +72,42 @@ export class BookListComponent implements OnInit {
   }
 
   clickAdd = () => {
-    // this.router.navigateByUrl('/data/edit-book');
+    this.router.navigateByUrl('/data/edit-book');
   }
 
   clickDelete = (book: Book) => {
     console.log('clickDelete Reached');
-    // const dialogRef = this.dialog.open(BookDialogComponent, { data: book.name });
+    const dialogRef = this.dialog.open(BookDialogComponent, { data: book.name });
 
-    // dialogRef.afterClosed().subscribe(value => {
-      // if (value) {
-      //   const snackbarConfig = new MatSnackBarConfig();
+    dialogRef.afterClosed().subscribe(value => {
+      if (value) {
+        const snackbarConfig = new MatSnackBarConfig();
 
-      //   let snackbarMessage;
+        let snackbarMessage;
 
-      //   snackbarConfig.duration = 3000;
+        snackbarConfig.duration = 3000;
 
-      //   this.firestore.deleteBook(book.id)
-      //     .then(() => {
-      //       snackbarMessage = book.name + ' deleted successfully';
-      //       snackbarConfig.panelClass = ['snackbar-success'];
-      //     })
-      //     .catch((e) => {
-      //       snackbarMessage = 'Failed to delete ' + book.name;
-      //       snackbarConfig.panelClass = ['snackbar-fail'];
+        this.firestore.deleteBook(book.id)
+          .then(() => {
+            snackbarMessage = book.name + ' deleted successfully';
+            snackbarConfig.panelClass = ['snackbar-success'];
+          })
+          .catch((e) => {
+            snackbarMessage = 'Failed to delete ' + book.name;
+            snackbarConfig.panelClass = ['snackbar-fail'];
 
-      //       console.log(e);
-      //     })
-      //     .finally(() => this.snackbar.open(snackbarMessage, undefined, snackbarConfig));
-      // }
-    // });
+            console.log(e);
+          })
+          .finally(() => this.snackbar.open(snackbarMessage, undefined, snackbarConfig));
+      }
+    });
   }
 
   clickEdit = (book: Book) => {
     console.log('clickEdit Reached');
-    // this.dataStore.book = book;
+    this.dataStore.book = book;
 
-    // this.router.navigateByUrl('/data/edit-book');
+    this.router.navigateByUrl('/data/edit-book');
   }
 
   clickRow = (id: string) => {

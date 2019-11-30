@@ -7,8 +7,11 @@ table {
 }
 
 .detail-actions-container {
-  padding: 8px;
   text-align: center;
+
+  button {
+    margin: 8px 16px;
+  }
 }
 
 .detail-container {
@@ -19,18 +22,20 @@ table {
   height: 0;
 }
 
-.main-row:not(.expanded) {
-  &:active {
-    background: #efefef;
-  }
+.main-row {
+  &:not(.expanded) {
+    &:active {
+      background: #efefef;
+    }
 
-  &:hover {
-    background: #777;
+    &:hover {
+      background: #777;
+    }
   }
-}
-
-.main-row td {
-  border-bottom-width: 0;
+  
+  td {
+    border-bottom-width: 0;
+  }
 }
 
 .mat-footer-cell {
