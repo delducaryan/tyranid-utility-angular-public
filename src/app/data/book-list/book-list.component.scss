@@ -1,7 +1,38 @@
+table {
+  width: 100%;
+}
+
 .container {
   max-width: 500px;
 }
 
-table {
-  width: 100%;
+.detail-actions-container {
+  padding: 8px;
+  text-align: center;
+}
+
+.detail-container {
+  overflow: hidden;
+}
+
+.detail-row {
+  height: 0;
+}
+
+.main-row:not(.expanded) {
+  &:active {
+    background: #efefef;
+  }
+
+  &:hover {
+    background: #777;
+  }
+}
+
+.main-row td {
+  border-bottom-width: 0;
+}
+
+.mat-footer-cell {
+  text-align: right;
 }

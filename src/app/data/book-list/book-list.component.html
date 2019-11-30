@@ -2,6 +2,7 @@
   <table
     mat-table
     matSort
+    multiTemplateDataRows
     [dataSource]="dataSource"
   >
     <ng-container matColumnDef="name">
@@ -10,42 +11,65 @@
         mat-header-cell
         mat-sort-header
       >
-        Name
+        Books
       </th>
-      <td *matCellDef="let row" mat-cell>
+      <td *matCellDef="let row" mat-cell matRipple>
         {{row.name}}
       </td>
-    </ng-container>
-    <ng-container matColumnDef="actions">
-      <th
-        *matHeaderCellDef
-        mat-header-cell
-      ></th>
-      <td *matCellDef="let row" mat-cell>
-        <button mat-stroked-button (click)="clickEdit(row)">
-          <mat-icon>
-            edit
-          </mat-icon>
-        </button>
-        <button mat-stroked-button (click)="clickDelete(row)">
-          <mat-icon>
-            delete
-          </mat-icon>
+      <td *matFooterCellDef mat-footer-cell>
+        <button mat-stroked-button (click)="clickAdd()">
+          Add Book
         </button>
       </td>
     </ng-container>
 
-    <tr *matHeaderRowDef="['name', 'actions']" mat-header-row></tr>
-    <tr *matRowDef="let row; columns: ['name', 'actions']" mat-row></tr>
+    <ng-container matColumnDef="expandedDetail">
+      <td *matCellDef="let row" mat-cell>
+        <div [@expandDetails]="expandedId === row.id" class="detail-container">
+          <div class="detail-actions-container">
+            <button mat-stroked-button (click)="clickEdit(row)">
+              Edit
+            </button>
+            <button mat-stroked-button (click)="clickDelete(row)">
+              Delete
+            </button>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="['name']" mat-header-row></tr>
+    <tr
+      *matRowDef="let row; columns: ['name']"
+      mat-row
+      class="main-row"
+      [class.expanded]="expandedId === row.id"
+      (click)="clickRow(row.id)"
+    ></tr>
+    <tr
+      *matRowDef="let row; columns: ['expandedDetail']"
+      mat-row
+      class="detail-row"
+    ></tr>
+    <tr *matFooterRowDef="['name']; sticky: true" mat-footer-row></tr>
 
   </table>
-
-  <mat-paginator [pageSize]="2"></mat-paginator>
   
-  <button mat-stroked-button (click)="clickAdd()">
+  <!-- <button mat-stroked-button (click)="clickAdd()">
     <mat-icon>
       add
     </mat-icon>
     Add Book
-  </button>
+  </button> -->
+
+  <!-- <button mat-stroked-button (click)="clickEdit(row)">
+      <mat-icon>
+        edit
+      </mat-icon>
+    </button>
+    <button mat-stroked-button (click)="clickDelete(row)">
+      <mat-icon>
+        delete
+      </mat-icon>
+    </button> -->
 </div>
