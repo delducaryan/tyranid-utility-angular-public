@@ -1,20 +1,22 @@
 <div class="container">
   <table
     mat-table
-    matSort
     multiTemplateDataRows
     [dataSource]="dataSource"
+    [@rowFadeIn]="test"
+    (click)="clickTest()"
   >
     <ng-container matColumnDef="name">
       <th
         *matHeaderCellDef
         mat-header-cell
-        mat-sort-header
       >
         Books
       </th>
       <td *matCellDef="let row" mat-cell matRipple>
-        {{row.name}}
+        <div class="fadein overflow-hidden">
+          {{row.name}}
+        </div>
       </td>
       <td *matFooterCellDef mat-footer-cell>
         <button mat-stroked-button (click)="clickAdd()">
@@ -28,7 +30,7 @@
 
     <ng-container matColumnDef="expandedDetail">
       <td *matCellDef="let row" mat-cell>
-        <div [@expandDetails]="expandedId === row.id" class="detail-container">
+        <div [@expandDetails]="expandedId === row.id" class="overflow-hidden">
           <mat-divider></mat-divider>
           <div class="detail-actions-container">
             <button mat-stroked-button (click)="clickEdit(row)">
@@ -52,7 +54,7 @@
       </td>
     </ng-container>
 
-    <tr *matHeaderRowDef="['name']" mat-header-row></tr>
+    <tr *matHeaderRowDef="['name']; sticky: true" mat-header-row></tr>
     <tr
       *matRowDef="let row; columns: ['name']"
       mat-row

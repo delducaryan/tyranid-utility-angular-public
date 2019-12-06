@@ -1,24 +1,19 @@
 import {
   animate,
+  stagger,
   state,
   style,
   transition,
   trigger,
+  useAnimation,
   query,
 } from '@angular/animations';
 import {
   Component,
   OnInit,
-  ViewChild,
 } from '@angular/core';
-import {
-  MatDialog,
-} from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import {
-  MatTable,
-  MatTableDataSource,
-} from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import {
   MatSnackBar,
@@ -48,14 +43,24 @@ import Book from 'src/models/book';
       })),
       transition('false <=> true', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
+    trigger('rowFadeIn', [
+      transition('* <=> *', [
+        query('.fadein, .main-row', [
+          style({ height: '0px', opacity: 0 }),
+          stagger(20, [
+            animate('2000ms cubic-bezier(0.35, 0, 0.25, 1)', style({ height: '*', opacity: 1 }))
+          ])
+        ], { optional: true })
+      ])
+    ]),
   ],
 })
 export class BookListComponent implements OnInit {
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-
   dataSource = new MatTableDataSource<Book>([]);
   expandedId: string;
+  loadingComplete = false;
+  test = true;
 
   constructor(
     private dataStore: DataStoreService,
@@ -66,9 +71,13 @@ export class BookListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.dataSource.sort = this.sort;
+    this.firestore.books$.subscribe(value => {
+      return this.dataSource.data = value.concat(value, value, value, value);//value.sort(compareByName));
+    });
+  }
 
-    this.firestore.books$.subscribe(value => this.dataSource.data = value.sort(compareByName));
+  clickTest = () => {
+    this.test = !this.test;
   }
 
   clickAdd = () => {
@@ -76,7 +85,6 @@ export class BookListComponent implements OnInit {
   }
 
   clickDelete = (book: Book) => {
-    console.log('clickDelete Reached');
     const dialogRef = this.dialog.open(BookDialogComponent, { data: book.name });
 
     dialogRef.afterClosed().subscribe(value => {
@@ -104,7 +112,6 @@ export class BookListComponent implements OnInit {
   }
 
   clickEdit = (book: Book) => {
-    console.log('clickEdit Reached');
     this.dataStore.book = book;
 
     this.router.navigateByUrl('/data/edit-book');
