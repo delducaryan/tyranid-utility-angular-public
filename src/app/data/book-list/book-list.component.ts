@@ -7,6 +7,7 @@ import {
   trigger,
   useAnimation,
   query,
+  group,
 } from '@angular/animations';
 import {
   Component,
@@ -41,17 +42,25 @@ import Book from 'src/models/book';
       state('false', style({
         height: '0px',
       })),
-      transition('false <=> true', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+      transition('false <=> true', animate('200ms ease-in-out')),
     ]),
-    trigger('rowFadeIn', [
-      transition('* <=> *', [
-        query('.fadein, .main-row', [
-          style({ height: '0px', opacity: 0 }),
-          stagger(20, [
-            animate('2000ms cubic-bezier(0.35, 0, 0.25, 1)', style({ height: '*', opacity: 1 }))
-          ])
-        ], { optional: true })
-      ])
+    trigger('tableLoad', [
+      transition('* => *', [
+        group([
+          query('.main-row', [
+            style({ transform: 'translateY(40px)' }),
+            stagger(40, [
+              animate('200ms ease-in-out', style({ transform: 'none' }))
+            ]),
+          ], { optional: true }),
+          query('.fadein', [
+            style({ opacity: 0 }),
+            stagger(40, [
+              animate('200ms ease-in-out', style({ opacity: 1 }))
+            ]),
+          ], { optional: true }),
+        ]),
+      ]),
     ]),
   ],
 })
@@ -60,7 +69,7 @@ export class BookListComponent implements OnInit {
   dataSource = new MatTableDataSource<Book>([]);
   expandedId: string;
   loadingComplete = false;
-  test = true;
+  triggerFadeIn = false;
 
   constructor(
     private dataStore: DataStoreService,
@@ -72,12 +81,14 @@ export class BookListComponent implements OnInit {
 
   ngOnInit() {
     this.firestore.books$.subscribe(value => {
+      this.triggerFadeIn = true;
+
       return this.dataSource.data = value.concat(value, value, value, value);//value.sort(compareByName));
     });
   }
 
   clickTest = () => {
-    this.test = !this.test;
+    this.triggerFadeIn = !this.triggerFadeIn;
   }
 
   clickAdd = () => {
