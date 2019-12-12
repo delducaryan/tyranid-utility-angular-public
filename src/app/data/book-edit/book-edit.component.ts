@@ -37,7 +37,6 @@ export class BookEditComponent implements OnInit {
     if (this.dataStore.book) {
       const data = this.dataStore.book;
 
-      this.dataStore.book = undefined;
       this.id = data.id;
 
       delete data.id;

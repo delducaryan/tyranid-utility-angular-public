@@ -4,10 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-pub": "ng serve --host 0.0.0.0",
     "build": "ng build",
-    "build-p": "ng build --prod",
+    "build-prod": "ng build --prod",
     "test": "ng test",
-    "test-c": "ng test --code-coverage",
+    "test-cov": "ng test --code-coverage",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },

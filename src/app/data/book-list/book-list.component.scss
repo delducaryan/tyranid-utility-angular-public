@@ -3,7 +3,8 @@ table {
 }
 
 .container {
-  height: calc(100vh - 56px);
+  // height: calc(100vh - 56px - 56px);
+  height: 456px;
   overflow: auto;
 }
 
@@ -17,6 +18,12 @@ table {
 
 .detail-row {
   height: 0;
+
+  &:last-of-type {
+    td {
+      border-bottom-width: 0;
+    }
+  }
 }
 
 .main-row {
@@ -31,7 +38,10 @@ table {
   }
 }
 
-.mat-footer-cell {
+.footer-cell {
+  border-top-color: rgba(255, 255, 255, 0.12);
+  border-top-style: solid;
+  border-top-width: 1px;
   text-align: right;
 }
 

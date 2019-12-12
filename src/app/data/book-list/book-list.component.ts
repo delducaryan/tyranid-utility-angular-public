@@ -1,13 +1,12 @@
 import {
   animate,
+  group,
+  query,
   stagger,
   state,
   style,
   transition,
   trigger,
-  useAnimation,
-  query,
-  group,
 } from '@angular/animations';
 import {
   Component,
@@ -68,8 +67,7 @@ export class BookListComponent implements OnInit {
 
   dataSource = new MatTableDataSource<Book>([]);
   expandedId: string;
-  loadingComplete = false;
-  triggerFadeIn = false;
+  innerHeight: any;
 
   constructor(
     private dataStore: DataStoreService,
@@ -80,15 +78,10 @@ export class BookListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.firestore.books$.subscribe(value => {
-      this.triggerFadeIn = true;
+    this.dataStore.book = undefined;
 
-      return this.dataSource.data = value.concat(value, value, value, value);//value.sort(compareByName));
-    });
-  }
-
-  clickTest = () => {
-    this.triggerFadeIn = !this.triggerFadeIn;
+    this.innerHeight = window.innerHeight;
+    this.firestore.books$.subscribe(value => this.dataSource.data = JSON.parse(JSON.stringify(value.concat(value, value, value, value))));//value.sort(compareByName));
   }
 
   clickAdd = () => {

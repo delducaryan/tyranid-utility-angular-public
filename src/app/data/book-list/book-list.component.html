@@ -21,8 +21,15 @@
           {{row.name}}
         </div>
       </td>
-      <td *matFooterCellDef mat-footer-cell>
-        <button mat-stroked-button (click)="clickAdd()">
+      <td
+        *matFooterCellDef
+        mat-footer-cell
+        class="footer-cell"
+      >
+        <button
+          mat-stroked-button
+          (click)="clickAdd()"
+        >
           <mat-icon [inline]="true">
             add
           </mat-icon>
@@ -32,11 +39,20 @@
     </ng-container>
 
     <ng-container matColumnDef="expandedDetail">
-      <td *matCellDef="let row" mat-cell>
-        <div [@expandDetails]="expandedId === row.id" class="overflow-hidden">
+      <td
+        *matCellDef="let row"
+        mat-cell
+      >
+        <div
+          [@expandDetails]="expandedId === row.id"
+          class="overflow-hidden"
+        >
           <mat-divider></mat-divider>
           <div class="detail-actions-container">
-            <button mat-stroked-button (click)="clickEdit(row)">
+            <button
+              mat-stroked-button
+              (click)="clickEdit(row)"
+            >
               <mat-icon [inline]="true">
                 edit
               </mat-icon>
@@ -57,7 +73,10 @@
       </td>
     </ng-container>
 
-    <tr *matHeaderRowDef="['name']; sticky: true" mat-header-row></tr>
+    <tr
+      *matHeaderRowDef="['name']; sticky: true"
+      mat-header-row
+    ></tr>
     <tr
       *matRowDef="let row; columns: ['name']"
       mat-row
@@ -70,7 +89,10 @@
       mat-row
       class="detail-row"
     ></tr>
-    <tr *matFooterRowDef="['name']; sticky: true" mat-footer-row></tr>
+    <tr
+      *matFooterRowDef="['name']; sticky: true"
+      mat-footer-row
+    ></tr>
 
   </table>
 </div>
